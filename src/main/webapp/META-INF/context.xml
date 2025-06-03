@@ -1,0 +1,31 @@
+<Context>
+
+
+    <Resource name="services/ConnectionService"
+              type="org.decade.studentmanangement.services.ConnectionService"
+              factory="org.decade.studentmanangement.services.factories.ConnectionServiceFactory"
+              singleton="true"
+              username="root"
+              password="root"/>
+
+    <Resource name="services/UserDao"
+              type="org.decade.studentmanangement.dao.UserDao"
+              factory="org.decade.studentmanangement.services.factories.UserServiceFactory"
+              singleton="true"
+    />
+    <Resource name="services/StudentDao"
+              type="org.decade.studentmanangement.dao.StudentDao"
+              factory="org.decade.studentmanangement.services.factories.StudentServiceFactory"
+              singleton="true"
+    />
+    <Resource name="services/CourseDao"
+              type="org.decade.studentmanangement.dao.CourseDao"
+              factory="org.decade.studentmanangement.services.factories.CourseServiceFactory"
+              singleton="true"
+    />
+    <Resource name="services/CourseStudentDao"
+              type="org.decade.studentmanangement.dao.CourseStudentDao"
+              factory="org.decade.studentmanangement.services.factories.StudentCourseServiceFactory"
+              singleton="true"
+    />
+</Context>
