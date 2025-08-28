@@ -1,160 +1,136 @@
 package org.decade.studentmanangement.services;
 
-import org.decade.studentmanangement.dao.CourseDao;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.decade.studentmanangement.dao.CourseStudentDao;
-import org.decade.studentmanangement.dao.StudentDao;
 import org.decade.studentmanangement.model.Course;
 import org.decade.studentmanangement.model.Student;
 import org.decade.studentmanangement.model.StudentCourse;
+import org.decade.studentmanangement.model.StudentCourseId;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CourseStudentService implements CourseStudentDao {
-      private final ConnectionService connectionService;
-      private final CourseDao courseDao;
-      private final StudentDao studentDao;
+        private final EntityManagerFactory emf;
 
-      public CourseStudentService(
-            ConnectionService connectionService,
-            CourseDao courseDao,
-            StudentDao studentDao) {
-            this.connectionService = connectionService;
-            this.courseDao = courseDao;
-            this.studentDao = studentDao;
-      }
+        public CourseStudentService(EntityManagerFactory emf) {
+                this.emf = emf;
+        }
 
+        private SQLException wrap(Exception e) {
+                return (e instanceof SQLException) ? (SQLException) e : new SQLException(e);
+        }
 
-      public int addStudentToCourse(final String student, final String course, final int year)
-            throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Integer>() {
-                  @Override
-                  public Integer run(java.sql.Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("insert into Student_Course values(?,?,?,?)");
-                        stmt.setString(1, student);
-                        stmt.setString(2, course);
-                        stmt.setInt(3, year);
-                        stmt.setInt(4, 0);
-                        return stmt.executeUpdate();
-                  }
-            });
-      }
-
-      public int updateStudentScore(final String student, final String course, final int year, final int score)
-            throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Integer>() {
-
-                  @Override
-                  public Integer run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement(
-                              "update Student_Course set score = ? where idStudent = ? and idCourse = ? and courseYear = ?");
-                        stmt.setInt(1, score);
-                        stmt.setString(2, student);
-                        stmt.setString(3, course);
-                        stmt.setInt(4, year);
-                        return stmt.executeUpdate();
-                  }
-            });
-      }
-
-      public int deleteStudentFromCourse(final String student, final String course, final int year)
-            throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Integer>() {
-                  @Override
-                  public Integer run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement(
-                              "delete from Student_Course where idStudent = ? and idCourse = ? and courseYear = ?");
-                        stmt.setString(1, student);
-                        stmt.setString(2, course);
-                        stmt.setInt(3, year);
-
-                        return stmt.executeUpdate();
-                  }
-            });
-      }
-
-      public List<StudentCourse> getListStudentsByCourse(final String id, final int year)
-            throws SQLException {
-            return connectionService.execute(new ConnectionCallback<List<StudentCourse>>() {
-                  @Override
-                  public List<StudentCourse> run(Connection connection) throws SQLException {
-                        Course course = courseDao.getCourse(id, year);
-
-                        PreparedStatement stmt = connection.prepareStatement(
-                              "select Student.*,Student_Course.score " +
-                                    "from Student_Course " +
-                                    "INNER JOIN Student ON Student.id = Student_Course.idStudent " +
-                                    "where Student_Course.idCourse = ?"
-                                    + "and Student_Course.courseYear = ?");
-                        stmt.setString(1, id);
-                        stmt.setInt(2, year);
-                        ResultSet result = stmt.executeQuery();
-                        List<StudentCourse> l = new ArrayList<>();
-                        while (result.next()) {
-                              Student student = new Student(
-                                    result.getString("id"),
-                                    result.getString("fullname"),
-                                    result.getDate("birthday"),
-                                    result.getInt("grade"),
-                                    result.getString("address"),
-                                    result.getString("notes")
-                              );
-                              int score = result.getInt("score");
-
-                              l.add(new StudentCourse(course, student, score));
+        public int addStudentToCourse(final String student, final String course, final int year)
+                throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        StudentCourseId id = new StudentCourseId(student, course, year);
+                        StudentCourse sc = em.find(StudentCourse.class, id);
+                        if (sc != null) {
+                                tx.commit();
+                                return 0; // already exists
                         }
-                        return l;
-                  }
-            });
-      }
+                        sc = new StudentCourse();
+                        sc.setId(id);
+                        sc.setStudent(em.find(Student.class, student));
+                        sc.setCourse(em.find(Course.class, new Course.CoursePk(course, year)));
+                        // score is derived from assessments; no direct score set here
+                        em.persist(sc);
+                        tx.commit();
+                        return 1;
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-      public List<StudentCourse> getCoursesByStudentInTheYear(final String studentId, final int year) throws SQLException {
-            return connectionService.execute(new ConnectionCallback<List<StudentCourse>>() {
-                  @Override
-                  public List<StudentCourse> run(Connection connection) throws SQLException {
-                        Student student = studentDao.getStudent(studentId);
-                        PreparedStatement stmt;
-                        if (year != -1) {
-                              stmt = connection
-                                    .prepareStatement(
-                                          "select Course.*,Student_Course.score " +
-                                                "from Student_Course " +
-                                                "INNER JOIN Course " +
-                                                "ON Student_Course.idCourse = Course.id " +
-                                                "where Student_Course.courseYear = Course.courseYear " +
-                                                "and Student_Course.idStudent = ? " + "and Student_Course.courseYear = ?");
-                              stmt.setString(1, studentId);
-                              stmt.setInt(2, year);
-                        } else {
-                              stmt = connection
-                                    .prepareStatement(
-                                          "select Course.*,Student_Course.score " +
-                                                "from Student_Course " +
-                                                "INNER JOIN Course " +
-                                                "ON Student_Course.idCourse = Course.id " +
-                                                "where Student_Course.courseYear = Course.courseYear " +
-                                                "and Student_Course.idStudent = ? ");
-                              stmt.setString(1, studentId);
+        public int updateStudentScore(final String student, final String course, final int year, final int score)
+                throws SQLException {
+                // Score is derived from assessments; direct update is not supported anymore.
+                return 0;
+        }
+
+        public int deleteStudentFromCourse(final String student, final String course, final int year)
+                throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        StudentCourse sc = em.find(StudentCourse.class, new StudentCourseId(student, course, year));
+                        if (sc != null) {
+                                em.remove(sc);
+                                tx.commit();
+                                return 1;
                         }
-                        ResultSet result = stmt.executeQuery();
-                        List<StudentCourse> l = new ArrayList<>();
-                        while (result.next()) {
-                              Course course = new Course(
-                                    result.getString("id"),
-                                    result.getString("courseName"),
-                                    result.getString("lecture"),
-                                    result.getInt("courseYear"),
-                                    result.getString("notes")
-                              );
-                              int score = result.getInt("score");
-                              l.add(new StudentCourse(course, student, score));
-                        }
-                        return l;
-                  }
-            });
-      }
+                        tx.commit();
+                        return 0;
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
+
+        public List<StudentCourse> getListStudentsByCourse(final String id, final int year)
+                throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        return em.createQuery(
+                                        "select sc from StudentCourse sc join fetch sc.student s join fetch sc.course c where sc.id.courseId = :cid and sc.id.courseYear = :yr",
+                                        StudentCourse.class)
+                                .setParameter("cid", id)
+                                .setParameter("yr", year)
+                                .getResultList();
+                } catch (Exception e) {
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
+
+        public List<StudentCourse> getCoursesByStudentInTheYear(final String studentId, final int year) throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        String jpql = "select sc from StudentCourse sc join fetch sc.course c join fetch sc.student s where sc.id.studentId = :sid" +
+                                (year != -1 ? " and sc.id.courseYear = :yr" : "");
+                        var q = em.createQuery(jpql, StudentCourse.class)
+                                .setParameter("sid", studentId);
+                        if (year != -1) q.setParameter("yr", year);
+                        return q.getResultList();
+                } catch (Exception e) {
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
+
+        public int countStudentsOfCourse(String courseId, int year) throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        Long cnt = em.createQuery("select count(sc) from StudentCourse sc where sc.id.courseId = :cid and sc.id.courseYear = :yr", Long.class)
+                                .setParameter("cid", courseId)
+                                .setParameter("yr", year)
+                                .getSingleResult();
+                        return cnt.intValue();
+                } catch (Exception e) {
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 }

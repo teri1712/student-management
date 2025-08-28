@@ -1,71 +1,93 @@
 package org.decade.studentmanangement.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.sql.Date;
 
+@Entity
+@Table(name = "Student")
 public class Student {
 
-      private String id;
-      private String name;
-      private int grade;
-      private Date birthDay;
-      private String address;
-      private String notes;
+        public Student() {
+        }
 
-      public Student(String id, String name, Date birthDay, int grade, String address, String notes) {
-            this.id = id;
-            this.name = name;
-            this.grade = grade;
-            this.address = address;
-            this.birthDay = birthDay;
-            this.notes = notes;
-      }
+        public Student(String id, String fullname, Date birthDay, int grade, String address, String notes) {
+                this.id = id;
+                this.fullname = fullname;
+                this.grade = grade;
+                this.address = address;
+                this.birthDay = birthDay;
+                this.notes = notes;
+        }
 
-      public String getId() {
-            return id;
-      }
+        @Id
+        @Column(name = "id", length = 10)
+        private String id;
 
-      public String getName() {
-            return name;
-      }
+        @Column(name = "fullname", columnDefinition = "nchar(100)")
+        private String fullname;
 
-      public int getGrade() {
-            return grade;
-      }
+        @Column(name = "grade")
+        private int grade;
 
-      public Date getBirthDay() {
-            return birthDay;
-      }
+        @Column(name = "birthday")
+        private Date birthDay;
 
-      public void setId(String id) {
-            this.id = id;
-      }
+        @Column(name = "address", columnDefinition = "nchar(100)")
+        private String address;
 
-      public void setName(String name) {
-            this.name = name;
-      }
+        @Column(name = "notes", columnDefinition = "nchar(100)")
+        private String notes;
 
-      public void setGrade(int grade) {
-            this.grade = grade;
-      }
+        public String getId() {
+                return id;
+        }
 
-      public void setBirthDay(Date birthDay) {
-            this.birthDay = birthDay;
-      }
+        public String getFullname() {
+                return fullname;
+        }
 
-      public void setAddress(String address) {
-            this.address = address;
-      }
+        public int getGrade() {
+                return grade;
+        }
 
-      public void setNotes(String notes) {
-            this.notes = notes;
-      }
+        public Date getBirthDay() {
+                return birthDay;
+        }
 
-      public String getAddress() {
-            return address;
-      }
+        public void setId(String id) {
+                this.id = id;
+        }
 
-      public String getNotes() {
-            return notes;
-      }
+        public void setFullname(String name) {
+                this.fullname = name;
+        }
+
+        public void setGrade(int grade) {
+                this.grade = grade;
+        }
+
+        public void setBirthDay(Date birthDay) {
+                this.birthDay = birthDay;
+        }
+
+        public void setAddress(String address) {
+                this.address = address;
+        }
+
+        public void setNotes(String notes) {
+                this.notes = notes;
+        }
+
+        public String getAddress() {
+                return address;
+        }
+
+        public String getNotes() {
+                return notes;
+        }
 
 }

@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1" %>
-<%@page import="org.decade.studentmanangement.model.Student" %>
+<%@ page import="org.decade.studentmanangement.model.Student" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.decade.studentmanangement.model.StudentCourse" %>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@
     <title>Edit Student - Student Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/scripts/editstudent.js"></script>
     <style>
@@ -21,7 +21,7 @@
             border-color: grey;
             color: #000;
         }
-        
+
     </style>
 </head>
 <body>
@@ -55,7 +55,7 @@
                         <div class="form-group mb-4">
                             <label for="fullname" class="form-label">Full Name</label>
                             <input type="text" class="form-control" id="fullname" name="fullname"
-                                   value="<%=student.getName()%>" placeholder="Enter full name">
+                                   value="<%=student.getFullname()%>" placeholder="Enter full name">
                         </div>
 
                         <div class="form-group mb-4">

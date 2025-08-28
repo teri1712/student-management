@@ -60,7 +60,7 @@ public class CourseServlet extends HttpServlet {
             request.setAttribute("total", (total + limit - 1) / limit);
             request.setAttribute("query", query);
 
-            request.getRequestDispatcher("/management/courseManagement.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/management/courseManagement.jsp").forward(request, response);
       }
 
       @Override
@@ -69,6 +69,8 @@ public class CourseServlet extends HttpServlet {
             try {
                   if ("/list".equals(path)) {
                         handleListRequest(request, response);
+                  } else if ("/add".equals(path)) {
+                        request.getRequestDispatcher("/WEB-INF/management/addcourse.jsp").forward(request, response);
                   } else {
                         String id = request.getParameter("id");
                         int year = Integer.parseInt(request.getParameter("year"));
@@ -80,7 +82,7 @@ public class CourseServlet extends HttpServlet {
                         List<StudentCourse> students = courseStudentDao.getListStudentsByCourse(id, year);
                         request.setAttribute("students", students);
                         request.setAttribute("course", course);
-                        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/management/editcourse.jsp");
+                        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/management/editcourse.jsp");
                         requestDispatcher.forward(request, response);
                   }
             } catch (SQLException e) {
@@ -125,7 +127,7 @@ public class CourseServlet extends HttpServlet {
                   }
 
                   req.setAttribute("course", course);
-                  RequestDispatcher requestDispatcher = req.getRequestDispatcher("/management/editcourse.jsp");
+                  RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/management/editcourse.jsp");
                   requestDispatcher.forward(req, resp);
 
 

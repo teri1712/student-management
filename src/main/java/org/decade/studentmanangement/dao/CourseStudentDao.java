@@ -15,4 +15,6 @@ public interface CourseStudentDao {
       List<StudentCourse> getListStudentsByCourse(String id, int year) throws SQLException;
 
       List<StudentCourse> getCoursesByStudentInTheYear(String studentId, int year) throws SQLException;
+
+      int countStudentsOfCourse(String courseId, int year) throws SQLException;
 }

@@ -183,7 +183,7 @@
                             <tr>
                                 <td><%= student.getStudent().getId() %>
                                 </td>
-                                <td><%= student.getStudent().getName() %>
+                                <td><%= student.getStudent().getFullname() %>
                                 </td>
                                 <td><%= student.getStudent().getGrade() %>
                                 </td>

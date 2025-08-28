@@ -1,48 +1,51 @@
 package org.decade.studentmanangement.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.StaffUser;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserService implements UserDao {
 
-      private ConnectionService connectionService;
+        private final EntityManagerFactory emf;
 
-      public UserService(ConnectionService connectionService) {
-            this.connectionService = connectionService;
-      }
+        public UserService(EntityManagerFactory emf) {
+                this.emf = emf;
+        }
 
-      public StaffUser getUser(String username) throws SQLException {
-            return connectionService.execute(new ConnectionCallback<StaffUser>() {
-                  @Override
-                  public StaffUser run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select * from StaffUser where username = ?");
-                        stmt.setString(1, username);
-                        ResultSet result = stmt.executeQuery();
-                        if (!result.next()) {
-                              return null;
-                        }
-                        return new StaffUser(result.getString("fullname"), result.getString("username"), result.getString("pw"));
-                  }
-            });
-      }
+        private SQLException wrap(Exception e) {
+                return (e instanceof SQLException) ? (SQLException) e : new SQLException(e);
+        }
 
-      public void addUser(StaffUser user) throws SQLException {
-            connectionService.execute(new ConnectionCallback<Void>() {
-                  @Override
-                  public Void run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("insert into StaffUser values(?,?,?)");
-                        stmt.setString(1, user.getUserName());
-                        stmt.setString(2, user.getPassword());
-                        stmt.setString(3, user.getName());
-                        stmt.execute();
+        public StaffUser getUser(String username) throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        return em.find(StaffUser.class, username);
+                } catch (Exception e) {
                         return null;
-                  }
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-            });
-      }
+        public void addUser(StaffUser user) throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        em.persist(user);
+                        tx.commit();
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw wrap(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 }

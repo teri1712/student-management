@@ -1,11 +1,10 @@
 package org.decade.studentmanangement.services.factories;
 
-import org.decade.studentmanangement.dao.CourseDao;
-import org.decade.studentmanangement.dao.StudentDao;
-import org.decade.studentmanangement.services.ConnectionService;
+import jakarta.persistence.EntityManagerFactory;
 import org.decade.studentmanangement.services.CourseStudentService;
 
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.Name;
 import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
@@ -13,10 +12,24 @@ import java.util.Hashtable;
 public class StudentCourseServiceFactory implements ObjectFactory {
       @Override
       public Object getObjectInstance(Object obj, Name name, Context context, Hashtable<?, ?> env) throws Exception {
-
-            ConnectionService connectionService = (ConnectionService) context.lookup("ConnectionService");
-            StudentDao studentDao = (StudentDao) context.lookup("StudentDao");
-            CourseDao courseDao = (CourseDao) context.lookup("CourseDao");
-            return new CourseStudentService(connectionService, courseDao, studentDao);
+            EntityManagerFactory emf = null;
+            try {
+                  Object o = context.lookup("services/EntityManagerFactory");
+                  if (o instanceof EntityManagerFactory) emf = (EntityManagerFactory) o;
+            } catch (Exception ignore) {}
+            if (emf == null) {
+                  try {
+                        Object o = context.lookup("EntityManagerFactory");
+                        if (o instanceof EntityManagerFactory) emf = (EntityManagerFactory) o;
+                  } catch (Exception ignore) {}
+            }
+            if (emf == null) {
+                  try {
+                        InitialContext ic = new InitialContext();
+                        Object o = ic.lookup("java:comp/env/services/EntityManagerFactory");
+                        if (o instanceof EntityManagerFactory) emf = (EntityManagerFactory) o;
+                  } catch (Exception ignore) {}
+            }
+            return emf == null ? null : new CourseStudentService(emf);
       }
 }

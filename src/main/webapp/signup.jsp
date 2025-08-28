@@ -3,7 +3,23 @@
     HttpSession session = request.getSession(false);
     boolean userLoggedIn = session != null && session.getAttribute("user") != null;
     if (userLoggedIn) {
-        response.sendRedirect(request.getContextPath() + "/management/student/list");
+        // Redirect by role if already logged in
+        Object u = session.getAttribute("user");
+        String role = null;
+        if (u instanceof org.decade.studentmanangement.model.StaffUser) {
+            role = ((org.decade.studentmanangement.model.StaffUser) u).getRole();
+        }
+        String target;
+        if ("admin".equalsIgnoreCase(role)) {
+            target = "/management/student/list";
+        } else if ("teacher".equalsIgnoreCase(role)) {
+            target = "/teacher/courses";
+        } else if ("student".equalsIgnoreCase(role)) {
+            target = "/student/grades";
+        } else {
+            target = "/management/student/list"; // default fallback
+        }
+        response.sendRedirect(request.getContextPath() + target);
         return;
     }
 %>
@@ -17,49 +33,7 @@
     <title>Sign Up - Student Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
-    <style>
-        :root {
-            --bs-primary: #ffc107;
-            --bs-primary-rgb: 255, 193, 7;
-        }
-
-        .btn-primary {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
-            color: #000;
-        }
-
-
-        .bg-primary {
-            background-color: var(--bs-primary) !important;
-        }
-
-        .text-primary {
-            color: var(--bs-primary) !important;
-        }
-
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            border-bottom: none;
-        }
-
-
-        .btn-link {
-            color: var(--bs-primary);
-            text-decoration: none;
-        }
-
-        .btn-link:hover {
-            color: #e0a800;
-        }
-    </style>
+    <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -80,20 +54,29 @@
                     <form class="form-container" action="${pageContext.request.contextPath}/signup" method="post">
                         <div class="form-group mb-4">
                             <label for="username" class="form-label fw-semibold">Username</label>
-                            <input type="text" required minlength="5" class="form-control" id="username"
+                            <input type="text" required minlength="3" class="form-control" id="username"
                                    name="username" placeholder="Choose a username">
                         </div>
 
                         <div class="form-group mb-4">
                             <label for="password" class="form-label fw-semibold">Password</label>
-                            <input type="password" required minlength="5" class="form-control" id="password"
+                            <input type="password" required minlength="3" class="form-control" id="password"
                                    name="password" placeholder="Create a password">
                         </div>
 
                         <div class="form-group mb-4">
                             <label for="fullname" class="form-label fw-semibold">Full Name</label>
-                            <input type="text" required minlength="5" class="form-control" id="fullname"
+                            <input type="text" required minlength="3" class="form-control" id="fullname"
                                    name="fullname" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="role" class="form-label fw-semibold">Role</label>
+                            <select id="role" name="role" class="form-select" required>
+                                <option value="student" selected>Student</option>
+                                <option value="teacher">Teacher</option>
+                            </select>
+                            <div class="form-text">Admin account creation is not available on public signup.</div>
                         </div>
 
                         <div class="d-grid gap-2 mb-4">

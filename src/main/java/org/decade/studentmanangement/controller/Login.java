@@ -15,35 +15,48 @@ import java.io.IOException;
 @WebServlet("/login")
 public class Login extends HttpServlet {
 
-      @Resource(name = "services/UserDao")
-      private UserDao userDao;
+        @Resource(name = "services/UserDao")
+        private UserDao userDao;
 
 
-      @Override
-      protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            try {
-                  StaffUser user = userDao.getUser(username);
-                  String error = null;
-                  if (user == null || !user.getPassword().equals(password)) {
+        @Override
+        protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+                String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                try {
+                        StaffUser user = userDao.getUser(username);
+                        String error = null;
+                        if (user == null) {
+                                error = "Username not found";
+                        } else if (!user.getPassword().equals(password)) {
+                                error = "Wrong password";
+                        }
+                        if (error != null) {
+                                request.setAttribute("error", error);
+                                request.getRequestDispatcher("login.jsp").forward(request, response);
+                                return;
+                        }
+                        HttpSession session = request.getSession();
+                        session.setAttribute("user", user);
 
-                  }
-                  if (user == null) {
-                        error = "Username not found";
-                  } else if (!user.getPassword().equals(password)) {
-                        error = "Wrong password";
-                  }
-                  if (error != null) {
-                        request.setAttribute("error", error);
-                        request.getRequestDispatcher("login.jsp").forward(request, response);
-                        return;
-                  }
-                  HttpSession session = request.getSession();
-                  session.setAttribute("user", user);
-                  response.sendRedirect(request.getContextPath() + "/management/student/list");
-            } catch (Exception ex) {
-                  ex.printStackTrace();
-            }
-      }
+                        String role = user.getRole() == null ? "" : user.getRole().toLowerCase();
+                        String target;
+                        switch (role) {
+                                case "admin":
+                                        target = "/management/student/list";
+                                        break;
+                                case "teacher":
+                                        target = "/teacher/courses";
+                                        break;
+                                case "student":
+                                        target = "/student/grades";
+                                        break;
+                                default:
+                                        target = "/management/student/list";
+                        }
+                        response.sendRedirect(request.getContextPath() + target);
+                } catch (Exception ex) {
+                        ex.printStackTrace();
+                }
+        }
 }

@@ -28,4 +28,18 @@
               factory="org.decade.studentmanangement.services.factories.StudentCourseServiceFactory"
               singleton="true"
     />
+    <Resource name="services/AssessmentDao"
+              type="org.decade.studentmanangement.dao.AssessmentDao"
+              factory="org.decade.studentmanangement.services.factories.AssessmentServiceFactory"
+              singleton="true"
+    />
+
+    <!-- JPA EntityManagerFactory via JNDI ObjectFactory (not a singleton class, container-managed) -->
+    <Resource name="services/EntityManagerFactory"
+              type="jakarta.persistence.EntityManagerFactory"
+              factory="org.decade.studentmanangement.services.factories.EntityManagerFactoryObjectFactory"
+              singleton="true"
+              username="root"
+              password="root"
+    />
 </Context>

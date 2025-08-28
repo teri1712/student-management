@@ -40,16 +40,13 @@ public class CourseStudentServlet extends HttpServlet {
                               return;
                         }
                         courseStudentDao.addStudentToCourse(studentId, courseId, year);
-                  } else if ("update".equals(op)) {
-                        int score = Integer.parseInt(request.getParameter("score"));
-                        courseStudentDao.updateStudentScore(studentId, courseId, year, score);
                   }
 
                   request.setAttribute("course", course);
 
                   List<StudentCourse> students = courseStudentDao.getListStudentsByCourse(courseId, year);
                   request.setAttribute("students", students);
-                  request.getRequestDispatcher("/management/editcourse.jsp").forward(request, response);
+                  request.getRequestDispatcher("/WEB-INF/management/editcourse.jsp").forward(request, response);
             } catch (SQLException e) {
                   response.sendError(400, "Bad request");
             }

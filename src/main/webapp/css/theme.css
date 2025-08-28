@@ -1,0 +1,95 @@
+/* Shared theme overrides extracted from JSPs */
+:root {
+    --bs-primary: #ffc107;
+    --bs-primary-rgb: 255, 193, 7;
+}
+
+/* Bootstrap primary overrides */
+.btn-primary {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #000;
+}
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+.text-primary {
+    color: var(--bs-primary) !important;
+}
+
+/* Common layout utility used across pages */
+.content-area {
+    padding: 2rem;
+}
+
+/* Common pagination styling used on list pages */
+.pagination .page-link {
+    color: #000;
+    background-color: transparent;
+    border-color: var(--bs-primary);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #000;
+}
+
+.pagination .page-link:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #000;
+}
+
+/* Common button extras */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+.btn-outline-success:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+}
+
+.form-control-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+    border-radius: 8px;
+}
+
+/* Link button styling used on auth pages */
+.btn-link {
+    color: var(--bs-primary);
+    text-decoration: none;
+}
+.btn-link:hover {
+    color: #e0a800;
+}

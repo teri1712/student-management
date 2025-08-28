@@ -1,184 +1,157 @@
 package org.decade.studentmanangement.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.decade.studentmanangement.dao.StudentDao;
 import org.decade.studentmanangement.model.Student;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class StudentService implements StudentDao {
-      private final ConnectionService connectionService;
+        private final EntityManagerFactory emf;
 
-      public StudentService(ConnectionService connectionService) {
-            this.connectionService = connectionService;
-      }
-
-      // Helper method to validate sortBy parameter to prevent SQL injection
-      private String validateSortBy(String sortBy) {
-            // Whitelist of allowed column names
-            switch (sortBy.toLowerCase()) {
-                  case "id":
-                  case "fullname":
-                  case "birthday":
-                  case "grade":
-                  case "address":
-                  case "notes":
-                        return sortBy.toLowerCase();
-                  default:
-                        return "id";
-            }
-      }
+        public StudentService(EntityManagerFactory emf) {
+                this.emf = emf;
+        }
 
 
-      public Student getStudent(String id) throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Student>() {
-                  @Override
-                  public Student run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select * from Student where id = ?");
-                        stmt.setString(1, id);
-                        ResultSet result = stmt.executeQuery();
-                        if (!result.next()) {
-                              return null;
+        public Student getStudent(String id) throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        return em.find(Student.class, id);
+                } catch (Exception e) {
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
+
+        public void addStudent(final Student student) throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        em.persist(student);
+                        tx.commit();
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
+
+        public void updateStudent(final Student student) throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        Student managed = em.find(Student.class, student.getId());
+                        if (managed != null) {
+                                managed.setFullname(student.getFullname());
+                                managed.setBirthDay(student.getBirthDay());
+                                managed.setGrade(student.getGrade());
+                                managed.setAddress(student.getAddress());
+                                managed.setNotes(student.getNotes());
                         }
-                        return new Student(
-                              result.getString("id"),
-                              result.getString("fullname"),
-                              result.getDate("birthday"),
-                              result.getInt("grade"),
-                              result.getString("address"),
-                              result.getString("notes")
-                        );
-                  }
-            });
-      }
+                        tx.commit();
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-      public void addStudent(final Student student) throws SQLException {
-            connectionService.execute(new ConnectionCallback<Void>() {
-                  @Override
-                  public Void run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("insert into Student values(?,?,?,?,?,?)");
-                        stmt.setString(1, student.getId());
-                        stmt.setNString(2, student.getName());
-                        stmt.setDate(3, student.getBirthDay());
-                        stmt.setInt(4, student.getGrade());
-                        stmt.setNString(5, student.getAddress());
-                        stmt.setNString(6, student.getNotes());
-                        stmt.execute();
-                        return null;
-                  }
-            });
-      }
+        public List<Student> findStudentsByName(String name, String sortBy, int page, int limit) throws SQLException {
+                String orderProp = (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        String jpql = "select s from Student s where s.fullname like :name order by s." + orderProp;
+                        return em.createQuery(jpql, Student.class)
+                                .setParameter("name", "%" + (name == null ? "" : name) + "%")
+                                .setMaxResults(limit)
+                                .setFirstResult(page * limit)
+                                .getResultList();
+                } catch (Exception e) {
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-      public void updateStudent(final Student student) throws SQLException {
-            connectionService.execute(new ConnectionCallback<Void>() {
-                  @Override
-                  public Void run(Connection connection) throws SQLException {
-                        PreparedStatement stmt;
-                        stmt = connection.prepareStatement(
-                              "update Student set fullname = ?,birthday = ?,grade = ?,address = ?,notes = ? where id = ?");
-                        stmt.setNString(1, student.getName());
-                        stmt.setDate(2, student.getBirthDay());
-                        stmt.setInt(3, student.getGrade());
-                        stmt.setNString(4, student.getAddress());
-                        stmt.setNString(5, student.getNotes());
-                        stmt.setString(6, student.getId());
-                        stmt.executeUpdate();
-                        return null;
+        public int countStudentsByName(String name) throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        Long cnt = em.createQuery("select count(s) from Student s where s.fullname like :name", Long.class)
+                                .setParameter("name", "%" + (name == null ? "" : name) + "%")
+                                .getSingleResult();
+                        return cnt.intValue();
+                } catch (Exception e) {
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-                  }
-            });
-      }
+        public int countStudents() throws SQLException {
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        Long cnt = em.createQuery("select count(s) from Student s", Long.class).getSingleResult();
+                        return cnt.intValue();
+                } catch (Exception e) {
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-      public List<Student> findStudentsByName(String name, String sortBy, int page, int limit) throws SQLException {
-            // Validate sortBy to prevent SQL injection
-            String validatedSortBy = validateSortBy(sortBy);
+        public List<Student> findStudents(int page, String sortBy, int limit) throws SQLException {
+                String orderProp = (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
+                EntityManager em = null;
+                try {
+                        em = emf.createEntityManager();
+                        String jpql = "select s from Student s order by s." + orderProp;
+                        return em.createQuery(jpql, Student.class)
+                                .setMaxResults(limit)
+                                .setFirstResult(page * limit)
+                                .getResultList();
+                } catch (Exception e) {
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 
-            return connectionService.execute(new ConnectionCallback<List<Student>>() {
-                  @Override
-                  public List<Student> run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select * from Student where fullname like ? order by " + validatedSortBy + " LIMIT ? OFFSET ?");
-                        stmt.setNString(1, "%" + name + "%");
-                        stmt.setInt(2, limit);
-                        stmt.setInt(3, page * limit);
-                        ResultSet result = stmt.executeQuery();
-                        List<Student> l = new ArrayList<>();
-                        while (result.next()) {
-                              Student s = new Student(result.getString("id"), result.getNString("fullname"),
-                                    result.getDate("birthday"), result.getInt("grade"), result.getString("address"),
-                                    result.getString("notes"));
-                              l.add(s);
-                        }
-                        return l;
-                  }
-            });
-      }
-
-      public int countStudentsByName(String name) throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Integer>() {
-                  @Override
-                  public Integer run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select COUNT(*) from Student where fullname like ?");
-                        stmt.setNString(1, "%" + name + "%");
-                        ResultSet rs = stmt.executeQuery();
-                        rs.next();
-                        return rs.getInt(1);
-                  }
-            });
-      }
-
-      public int countStudents() throws SQLException {
-            return connectionService.execute(new ConnectionCallback<Integer>() {
-                  @Override
-                  public Integer run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select COUNT(*) from Student");
-                        ResultSet rs = stmt.executeQuery();
-                        rs.next();
-                        return rs.getInt(1);
-                  }
-            });
-      }
-
-      public List<Student> findStudents(int page, String sortBy, int limit) throws SQLException {
-            // Validate sortBy to prevent SQL injection
-            String validatedSortBy = validateSortBy(sortBy);
-
-            return connectionService.execute(new ConnectionCallback<List<Student>>() {
-                  @Override
-                  public List<Student> run(Connection connection) throws SQLException {
-                        PreparedStatement stmt = connection.prepareStatement("select * from Student order by " + validatedSortBy + " LIMIT ? OFFSET ?");
-                        stmt.setInt(1, limit);
-                        stmt.setInt(2, page * limit);
-                        ResultSet result = stmt.executeQuery();
-                        List<Student> l = new ArrayList<>();
-                        while (result.next()) {
-                              Student s = new Student(result.getString("id"), result.getNString("fullname"),
-                                    result.getDate("birthday"), result.getInt("grade"), result.getString("address"),
-                                    result.getString("notes"));
-                              l.add(s);
-                        }
-                        return l;
-                  }
-            });
-      }
-
-      public void deleteStudent(final String id) throws SQLException {
-            connectionService.execute(new ConnectionCallback<Void>() {
-                  @Override
-                  public Void run(Connection connection) throws SQLException {
-                        PreparedStatement stmt;
-                        stmt = connection.prepareStatement("delete from Student_Course where idStudent = ?");
-                        stmt.setString(1, id);
-                        stmt.executeUpdate();
-
-                        stmt = connection.prepareStatement("delete from Student where id = ?");
-                        stmt.setString(1, id);
-                        stmt.executeUpdate();
-                        return null;
-                  }
-            });
-      }
+        public void deleteStudent(final String id) throws SQLException {
+                EntityManager em = null;
+                EntityTransaction tx = null;
+                try {
+                        em = emf.createEntityManager();
+                        tx = em.getTransaction();
+                        tx.begin();
+                        // delete from join table first
+                        em.createNativeQuery("delete from QuanLySinhVien.Student_Course where idStudent = ?")
+                                .setParameter(1, id)
+                                .executeUpdate();
+                        Student s = em.find(Student.class, id);
+                        if (s != null) em.remove(s);
+                        tx.commit();
+                } catch (Exception e) {
+                        if (tx != null && tx.isActive()) tx.rollback();
+                        throw new SQLException(e);
+                } finally {
+                        if (em != null) em.close();
+                }
+        }
 }

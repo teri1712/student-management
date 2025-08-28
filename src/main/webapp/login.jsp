@@ -8,7 +8,6 @@
     }
 %>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,49 +16,7 @@
     <title>Login - Student Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
-    <style>
-        :root {
-            --bs-primary: #ffc107;
-            --bs-primary-rgb: 255, 193, 7;
-        }
-
-        .btn-primary {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
-            color: #000;
-        }
-
-
-        .bg-primary {
-            background-color: var(--bs-primary) !important;
-        }
-
-        .text-primary {
-            color: var(--bs-primary) !important;
-        }
-
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            border-radius: 15px 15px 0 0 !important;
-            border-bottom: none;
-        }
-
-
-        .btn-link {
-            color: var(--bs-primary);
-            text-decoration: none;
-        }
-
-        .btn-link:hover {
-            color: #e0a800;
-        }
-    </style>
+    <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -95,11 +52,6 @@
                         </div>
                     </form>
 
-                    <div class="text-center">
-                        <p class="mb-2 text-muted">Don't have an account?</p>
-                        <a href="${pageContext.request.contextPath}/signup.jsp" class="btn btn-link fw-semibold">Create
-                            Account</a>
-                    </div>
                 </div>
             </div>
         </div>

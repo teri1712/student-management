@@ -6,35 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Add Course - Student Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
-    <style>
-        :root {
-            --bs-primary: #ffc107;
-            --bs-primary-rgb: 255, 193, 7;
-        }
-
-        .btn-primary {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
-            color: #000;
-        }
-
-
-        .bg-primary {
-            background-color: var(--bs-primary) !important;
-        }
-
-        .text-primary {
-            color: var(--bs-primary) !important;
-        }
-
-
-        .content-area {
-            padding: 2rem;
-        }
-
-
-    </style>
+    <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
 </head>
 <body>
 <div class="container-fluid">
