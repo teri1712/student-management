@@ -21,7 +21,10 @@ public class CourseService implements CourseDao {
         private String validateSortBy(String sortBy) {
                 return (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
         }
-        private SQLException wrap(Exception e) { return (e instanceof SQLException) ? (SQLException) e : new SQLException(e); }
+
+        private SQLException wrap(Exception e) {
+                return (e instanceof SQLException) ? (SQLException) e : new SQLException(e);
+        }
 
         @Override
         public Course getCourse(String id, int year) throws SQLException {
@@ -63,7 +66,14 @@ public class CourseService implements CourseDao {
                         tx = em.getTransaction();
                         tx.begin();
 
-                        // delete dependent rows from Student_Course first
+
+                        // delete dependent assessments first
+                        Query qa = em.createNativeQuery("delete from QuanLySinhVien.Assessment where idCourse = ? and courseYear = ?");
+                        qa.setParameter(1, id);
+                        qa.setParameter(2, year);
+                        qa.executeUpdate();
+
+                        // delete dependent rows from Student_Course
                         Query q = em.createNativeQuery("delete from QuanLySinhVien.Student_Course where idCourse = ? and courseYear = ?");
                         q.setParameter(1, id);
                         q.setParameter(2, year);

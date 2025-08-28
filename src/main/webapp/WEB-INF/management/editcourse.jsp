@@ -71,6 +71,10 @@
 
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">Save Course</button>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="deleteCourse('${pageContext.request.contextPath}', '<%=course.getId()%>', <%=course.getYear()%>)">
+                                Delete Course
+                            </button>
                         </div>
                     </form>
                 </div>

@@ -12,6 +12,8 @@
     <link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="${pageContext.request.contextPath}/scripts/editstudent.js"></script>
+
 </head>
 <body>
 <%
@@ -73,12 +75,10 @@
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">Update Student</button>
-                            <form action="${pageContext.request.contextPath}/management/student" method="post"
-                                  class="d-inline">
-                                <input type="hidden" name="op" value="delete">
-                                <input type="hidden" name="id" value="<%=student.getId()%>">
-                                <button type="submit" class="btn btn-danger">Delete Student</button>
-                            </form>
+                            <button type="button" class="btn btn-danger"
+                                    onclick="deleteStudent('${pageContext.request.contextPath}', '<%=student.getId()%>')">
+                                Delete Student
+                            </button>
                         </div>
                     </form>
                 </div>
