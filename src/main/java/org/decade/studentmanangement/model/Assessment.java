@@ -1,6 +1,8 @@
 package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 import java.time.Instant;
 
@@ -19,18 +21,29 @@ public class Assessment {
                 @JoinColumn(name = "idCourse", referencedColumnName = "idCourse"),
                 @JoinColumn(name = "courseYear", referencedColumnName = "courseYear")
         })
+        @NotNull
+        @Valid
         private StudentCourse studentCourse;
 
         @Column(name = "semester")
+        @NotNull
+        @Min(1)
+        @Max(2)
         private Integer semester; // 1 or 2 (or other convention)
 
         @Column(name = "assessYear")
+        @NotNull
+        @Min(1900)
+        @Max(2100)
         private Integer assessYear; // academic year of the assessment (e.g., 2025)
 
         @Column(name = "score")
+        @Min(0)
+        @Max(100)
         private Integer score;
 
         @Column(name = "assessedAt", nullable = false, updatable = false)
+        @PastOrPresent
         private Instant assessedAt = Instant.now();
 
         public Assessment() {

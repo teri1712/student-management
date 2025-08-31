@@ -1,6 +1,8 @@
 package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +12,13 @@ import java.util.List;
 public class StudentCourse {
 
         @EmbeddedId
+        @NotNull
+        @Valid
         private StudentCourseId id;
 
         @ManyToOne(fetch = FetchType.EAGER)
         @JoinColumn(name = "idStudent", referencedColumnName = "id", insertable = false, updatable = false)
+        @NotNull
         private Student student;
 
         @ManyToOne(fetch = FetchType.EAGER)
@@ -21,10 +26,12 @@ public class StudentCourse {
                 @JoinColumn(name = "idCourse", referencedColumnName = "id", insertable = false, updatable = false),
                 @JoinColumn(name = "courseYear", referencedColumnName = "courseYear", insertable = false, updatable = false)
         })
+        @NotNull
         private Course course;
 
         @OneToMany(mappedBy = "studentCourse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
         @OrderBy("semester DESC, id DESC")
+        @Valid
         private List<Assessment> assessments = new ArrayList<>();
 
         public StudentCourse() {

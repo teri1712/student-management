@@ -1,6 +1,7 @@
 package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 
 @Entity
@@ -21,19 +22,28 @@ public class Course {
 
       @Id
       @Column(name = "id", length = 10)
+      @NotBlank
+      @Size(max = 10)
       private String id;
 
       @Id
       @Column(name = "courseYear")
+      @Min(1900)
+      @Max(2100)
       private int year;
 
       @Column(name = "courseName", columnDefinition = "nchar(100)")
+      @NotBlank
+      @Size(max = 100)
       private String name;
 
       @Column(name = "lecture", columnDefinition = "nchar(100)")
+      @NotBlank
+      @Size(max = 100)
       private String lecture;
 
       @Column(name = "notes", columnDefinition = "nchar(100)")
+      @Size(max = 100)
       private String note;
 
       public String getId() {

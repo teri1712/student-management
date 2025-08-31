@@ -2,18 +2,25 @@ package org.decade.studentmanangement.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class StudentCourseId implements Serializable {
     @Column(name = "idStudent", length = 10)
+    @NotBlank
+    @Size(max = 10)
     private String studentId;
 
     @Column(name = "idCourse", length = 10)
+    @NotBlank
+    @Size(max = 10)
     private String courseId;
 
     @Column(name = "courseYear")
+    @Min(1900)
+    @Max(2100)
     private int courseYear;
 
     public StudentCourseId() {}

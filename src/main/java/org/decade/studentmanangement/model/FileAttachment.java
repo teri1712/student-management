@@ -1,6 +1,8 @@
 package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 
 import java.time.Instant;
 
@@ -13,14 +15,20 @@ public class FileAttachment {
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "ownerUsername", referencedColumnName = "username")
+        @NotNull
+        @Valid
         private StaffUser owner;
 
+        @Size(max = 50)
         private String type; // e.g., "certificate"
 
         @Column(name = "path", length = 255)
+        @NotBlank
+        @Size(max = 255)
         private String path; // web path or storage path
 
         @Column(name = "createdAt", nullable = false, updatable = false)
+        @PastOrPresent
         private Instant createdAt = Instant.now();
 
         public FileAttachment() {

@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.*;
 import java.sql.Date;
 
 @Entity
@@ -25,21 +26,30 @@ public class Student {
 
         @Id
         @Column(name = "id", length = 10)
+        @NotBlank
+        @Size(max = 10)
         private String id;
 
         @Column(name = "fullname", columnDefinition = "nchar(100)")
+        @NotBlank
+        @Size(max = 100)
         private String fullname;
 
         @Column(name = "grade")
+        @Min(1)
+        @Max(4)
         private int grade;
 
         @Column(name = "birthday")
+        @Past
         private Date birthDay;
 
         @Column(name = "address", columnDefinition = "nchar(100)")
+        @Size(max = 100)
         private String address;
 
         @Column(name = "notes", columnDefinition = "nchar(100)")
+        @Size(max = 100)
         private String notes;
 
         public String getId() {

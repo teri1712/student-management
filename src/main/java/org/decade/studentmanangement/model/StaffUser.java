@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.*;
+
 @Entity
 @Table(name = "StaffUser")
 public class StaffUser {
@@ -24,16 +26,24 @@ public class StaffUser {
         }
 
         @Column(name = "fullname", columnDefinition = "nchar(100)")
+        @NotBlank
+        @Size(max = 100)
         private String name;
 
         @Id
         @Column(name = "username", length = 100)
+        @NotBlank
+        @Size(max = 100)
         private String userName;
 
         @Column(name = "pw", length = 100)
+        @NotBlank
+        @Size(min = 4, max = 100)
         private String password;
 
         @Column(name = "role", length = 20)
+        @NotBlank
+        @Size(max = 20)
         private String role;
 
         public String getName() {
