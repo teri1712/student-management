@@ -53,6 +53,48 @@ create table QuanLySinhVien.Assessment
     constraint PK_Assessment primary key (id)
 );
 
+
+create table QuanLySinhVien.FileAttachment
+(
+    id            bigint auto_increment,
+    ownerUsername char(100),
+    type          varchar(50) default 'certificate',
+    path          varchar(255),
+    createdAt     timestamp   default current_timestamp,
+    constraint PK_FileAttachment primary key (id)
+);
+
+create table QuanLySinhVien.Club
+(
+    id          char(10),
+    clubName    nvarchar(100),
+    description nvarchar(255),
+    constraint PK_Club primary key (id)
+);
+
+create table QuanLySinhVien.Student_Club
+(
+    idStudent char(10),
+    idClub    char(10),
+    joinDate  date,
+    constraint PK_Student_Club primary key (idStudent, idClub),
+    foreign key (idStudent) references QuanLySinhVien.Student (id),
+    foreign key (idClub) references QuanLySinhVien.Club (id)
+);
+
+create table QuanLySinhVien.Event
+(
+    id        bigint auto_increment,
+    eventName nvarchar(100),
+    idClub    char(10),
+    eventDate datetime,
+    location  nvarchar(100),
+    constraint PK_Event primary key (id),
+    foreign key (idClub) references QuanLySinhVien.Club (id)
+);
+
+
+
 alter table QuanLySinhVien.Assessment
     add foreign key (idStudent) references Student (id);
 alter table QuanLySinhVien.Assessment
@@ -65,16 +107,6 @@ alter table QuanLySinhVien.Student_Course
 create index idx_student_fullname on QuanLySinhVien.Student (fullname);
 
 -- Attachments table
-create table QuanLySinhVien.FileAttachment
-(
-    id            bigint auto_increment,
-    ownerUsername char(100),
-    type          varchar(50) default 'certificate',
-    path          varchar(255),
-    createdAt     timestamp   default current_timestamp,
-    constraint PK_FileAttachment primary key (id)
-);
-
 alter table QuanLySinhVien.FileAttachment
     add foreign key (ownerUsername) references StaffUser (username);
 
@@ -114,4 +146,21 @@ VALUES ('SV001', 'COMP101', 2025),
        ('SV005', 'PHY101', 2025);
 
 INSERT INTO QuanLySinhVien.FileAttachment (ownerUsername, path)
-VALUES ('teacher1', 'certificate-sample.png')
+VALUES ('teacher1', 'certificate-sample.png');
+
+INSERT INTO QuanLySinhVien.Club (id, clubName, description)
+VALUES ('CLUB01', 'IT Club', 'Club for students interested in Information Technology'),
+       ('CLUB02', 'English Club', 'Club for improving English skills'),
+       ('CLUB03', 'Sports Club', 'Club for various sports activities');
+
+INSERT INTO QuanLySinhVien.Student_Club (idStudent, idClub, joinDate)
+VALUES ('SV001', 'CLUB01', '2023-01-15'),
+       ('SV002', 'CLUB01', '2023-01-15'),
+       ('SV002', 'CLUB02', '2023-02-20'),
+       ('SV003', 'CLUB03', '2023-03-10'),
+       ('SV004', 'CLUB02', '2023-02-20');
+
+INSERT INTO QuanLySinhVien.Event (eventName, idClub, eventDate, location)
+VALUES ('Hackathon 2024', 'CLUB01', '2024-10-25 08:00:00', 'Main Hall'),
+       ('English Speaking Contest', 'CLUB02', '2024-11-15 14:00:00', 'Room 201'),
+       ('Football Tournament', 'CLUB03', '2024-12-05 09:00:00', 'Stadium');
