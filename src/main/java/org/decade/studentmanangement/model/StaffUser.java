@@ -4,8 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "StaffUser")
@@ -31,12 +31,12 @@ public class StaffUser {
         private String name;
 
         @Id
-        @Column(name = "username", length = 100)
+        @Column(name = "username", length = 100, columnDefinition = "char(100)")
         @NotBlank
         @Size(max = 100)
         private String userName;
 
-        @Column(name = "pw", length = 100)
+        @Column(name = "pw", length = 100, columnDefinition = "char(100)")
         @NotBlank
         @Size(min = 4, max = 100)
         private String password;

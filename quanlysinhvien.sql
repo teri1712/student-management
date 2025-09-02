@@ -4,18 +4,18 @@ create database QuanLySinhVien;
 create table QuanLySinhVien.Student
 (
     id       char(10),
-    fullname nchar(100),
+    fullname nvarchar(100),
     birthday date,
     grade    int,
-    address  nchar(100),
-    notes    nchar(100),
+    address  nvarchar(100),
+    notes    nvarchar(100),
     constraint PK_Student primary key (id)
 );
 create table QuanLySinhVien.StaffUser
 (
     username char(100) unique,
     pw       char(100),
-    fullname nchar(100),
+    fullname nvarchar(100),
     role     varchar(20),
     constraint PK_Staff primary key (username)
 );
@@ -23,10 +23,10 @@ create table QuanLySinhVien.StaffUser
 create table QuanLySinhVien.Course
 (
     id         char(10),
-    courseName nchar(100),
-    lecture    nchar(100),
+    courseName nvarchar(100),
+    lecture    nvarchar(100),
     courseYear int,
-    notes      nchar(100),
+    notes      nvarchar(100),
     constraint PK_Course primary key (id, courseYear)
 );
 

@@ -26,32 +26,36 @@
             <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- CDI / Weld for Servlet containers (Tomcat) -->
         <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-            <version>4.0.0-M1</version>
+            <groupId>org.jboss.weld.servlet</groupId>
+            <artifactId>weld-servlet-core</artifactId>
+            <version>5.1.2.Final</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>4.0.0-M1</version>
+            <groupId>org.jboss.weld.module</groupId>
+            <artifactId>weld-jta</artifactId>
+            <version>5.1.2.Final</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-            <version>4.0.0-M1</version>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
+
+        <!-- Jakarta Transactions API (for @Transactional) -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>2.0.1</version>
         </dependency>
+        <!-- Narayana JTA implementation and CDI @Transactional interceptor -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>narayana-jta</artifactId>
+            <version>7.0.2.Final</version>
         </dependency>
 
         <!-- JPA + Hibernate -->
@@ -66,6 +70,11 @@
             <version>3.1.0</version>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>org.hibernate.orm</groupId>-->
+        <!--            <artifactId>hibernate-cdi</artifactId>-->
+        <!--            <version>6.5.2.Final</version>-->
+        <!--        </dependency>-->
         <!-- Jakarta Bean Validation API + Provider (Hibernate Validator) -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -84,6 +93,37 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>9.3.0</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- (Optional) Jersey deps removed if not used; keeping for now -->
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>4.0.0-M1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>4.0.0-M1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>4.0.0-M1</version>
+        </dependency>
+
+        <!-- JUnit -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

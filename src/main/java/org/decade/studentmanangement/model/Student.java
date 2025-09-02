@@ -4,8 +4,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import jakarta.validation.constraints.*;
+
 import java.sql.Date;
 
 @Entity
@@ -25,7 +25,7 @@ public class Student {
         }
 
         @Id
-        @Column(name = "id", length = 10)
+        @Column(name = "id", length = 10, columnDefinition = "char(10)")
         @NotBlank
         @Size(max = 10)
         private String id;

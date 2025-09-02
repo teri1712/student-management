@@ -1,25 +1,25 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.FileAttachment;
 import org.decade.studentmanangement.model.StaffUser;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/teacher/certificates")
 public class TeacherCertificatesServlet extends HttpServlet {
 
-    @Resource(name = "services/EntityManagerFactory")
-    private EntityManagerFactory emf;
+    @Inject
+    private UserDao userDao;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,19 +32,12 @@ public class TeacherCertificatesServlet extends HttpServlet {
         StaffUser user = (StaffUser) u;
         String username = user.getUserName();
 
-        EntityManager em = null;
         try {
-            em = emf.createEntityManager();
-            List<FileAttachment> list = em.createQuery(
-                    "select f from FileAttachment f where f.owner.userName = :u and f.type = :t order by f.createdAt desc",
-                    FileAttachment.class)
-                .setParameter("u", username)
-                .setParameter("t", "certificate")
-                .getResultList();
+            List<FileAttachment> list = userDao.listCertificates(username);
             req.setAttribute("files", list);
             req.getRequestDispatcher("/WEB-INF/teacher/certificates.jsp").forward(req, resp);
-        } finally {
-            if (em != null) em.close();
+        } catch (SQLException e) {
+            throw new ServletException(e);
         }
     }
 }

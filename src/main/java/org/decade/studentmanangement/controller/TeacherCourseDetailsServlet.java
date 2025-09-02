@@ -1,6 +1,6 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,10 +20,10 @@ import java.util.List;
 @WebServlet("/teacher/course")
 public class TeacherCourseDetailsServlet extends HttpServlet {
 
-    @Resource(name = "services/CourseDao")
+    @Inject
     private CourseDao courseDao;
 
-    @Resource(name = "services/CourseStudentDao")
+    @Inject
     private CourseStudentDao courseStudentDao;
 
     @Override

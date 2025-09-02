@@ -1,8 +1,9 @@
 package org.decade.studentmanangement.services;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import jakarta.transaction.Transactional;
 import org.decade.studentmanangement.dao.AssessmentDao;
 import org.decade.studentmanangement.model.Assessment;
 import org.decade.studentmanangement.model.StudentCourse;
@@ -15,58 +16,37 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
+@ApplicationScoped
 public class AssessmentService implements AssessmentDao {
 
-        private final EntityManagerFactory emf;
+        @Inject
+        private EntityManager em;
 
-        public AssessmentService(EntityManagerFactory emf) {
-                this.emf = emf;
-        }
-
-        // removed wrap(Exception) mapping to SQLException per requirement
+        private SQLException wrap(Exception e) { return (e instanceof SQLException) ? (SQLException) e : new SQLException(e); }
 
         @Override
+        @Transactional
         public void addAssessment(String studentId, String courseId, int courseYear, Integer semester, Integer assessYear, int score) throws SQLException {
-                EntityManager em = null;
-                EntityTransaction tx = null;
                 try {
-                        em = emf.createEntityManager();
-                        tx = em.getTransaction();
-                        tx.begin();
                         StudentCourse sc = em.find(StudentCourse.class, new StudentCourseId(studentId, courseId, courseYear));
                         if (sc == null) {
-                                tx.rollback();
                                 throw new SQLException("Enrollment (StudentCourse) not found");
                         }
                         Assessment a = new Assessment(sc, semester, assessYear, score);
                         em.persist(a);
-
-
-                        tx.commit();
                 } catch (Exception e) {
-                        if (tx != null && tx.isActive()) tx.rollback();
-                        e.printStackTrace();
-                } finally {
-                        if (em != null) em.close();
+                        throw wrap(e);
                 }
         }
 
         @Override
+        @Transactional
         public void importCsv(String courseId, int courseYear, InputStream csvStream) throws SQLException {
-                EntityManager em = null;
-                EntityTransaction tx = null;
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(csvStream, StandardCharsets.UTF_8))) {
-                        em = emf.createEntityManager();
-                        tx = em.getTransaction();
-                        tx.begin();
                         String line;
-                        // Expect CSV with header: studentId,semester,assessYear,score
                         boolean first = true;
                         while ((line = reader.readLine()) != null) {
-                                if (first && line.toLowerCase().contains("student")) {
-                                        first = false;
-                                        continue;
-                                }
+                                if (first && line.toLowerCase().contains("student")) { first = false; continue; }
                                 first = false;
                                 String[] parts = line.split(",");
                                 if (parts.length < 4) continue;
@@ -75,33 +55,20 @@ public class AssessmentService implements AssessmentDao {
                                 Integer assessYear = parseIntOrNull(parts[2]);
                                 Integer score = parseIntOrNull(parts[3]);
                                 if (studentId.isEmpty() || score == null) continue;
-
                                 StudentCourseId scid = new StudentCourseId(studentId, courseId, courseYear);
                                 StudentCourse sc = em.find(StudentCourse.class, scid);
-                                if (sc == null) {
-                                        // skip if enrollment not found
-                                        continue;
-                                }
+                                if (sc == null) continue;
                                 Assessment a = new Assessment(sc, semester, assessYear, score);
                                 em.persist(a);
                         }
-                        tx.commit();
                 } catch (IOException e) {
-                        if (tx != null && tx.isActive()) tx.rollback();
                         throw new SQLException(e);
                 } catch (Exception e) {
-                        if (tx != null && tx.isActive()) tx.rollback();
-                        throw new SQLException(e);
-                } finally {
-                        if (em != null) em.close();
+                        throw wrap(e);
                 }
         }
 
         private Integer parseIntOrNull(String s) {
-                try {
-                        return Integer.parseInt(s.trim());
-                } catch (Exception e) {
-                        return null;
-                }
+                try { return Integer.parseInt(s.trim()); } catch (Exception e) { return null; }
         }
 }

@@ -7,6 +7,11 @@
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- Weld CDI bootstrap listener -->
+    <listener>
+        <listener-class>org.jboss.weld.environment.servlet.Listener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>LogoutFilter</filter-name>
         <filter-class>org.decade.studentmanangement.filter.LogoutFilter</filter-class>

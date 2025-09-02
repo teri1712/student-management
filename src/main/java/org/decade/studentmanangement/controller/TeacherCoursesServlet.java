@@ -1,8 +1,6 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,8 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.decade.studentmanangement.dao.CourseDao;
 import org.decade.studentmanangement.dao.CourseStudentDao;
+import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.Course;
-import org.decade.studentmanangement.model.FileAttachment;
 import org.decade.studentmanangement.model.StaffUser;
 
 import java.io.IOException;
@@ -22,14 +20,14 @@ import java.util.List;
 @WebServlet("/teacher/courses")
 public class TeacherCoursesServlet extends HttpServlet {
 
-    @Resource(name = "services/CourseDao")
+    @Inject
     private CourseDao courseDao;
 
-    @Resource(name = "services/CourseStudentDao")
+    @Inject
     private CourseStudentDao courseStudentDao;
 
-    @Resource(name = "services/EntityManagerFactory")
-    private EntityManagerFactory emf;
+    @Inject
+    private UserDao userDao;
 
     private static final int PAGE_LIMIT = 10;
 
@@ -71,25 +69,14 @@ public class TeacherCoursesServlet extends HttpServlet {
                 } catch (SQLException ignored) { counts.put(c.getId() + "-" + c.getYear(), 0); }
             }
 
-            // Load teacher certificate (latest)
-            if (emf != null) {
-                EntityManager em = null;
-                try {
-                    em = emf.createEntityManager();
-                    List<FileAttachment> files = em.createQuery(
-                            "select f from FileAttachment f where f.owner.userName = :u and f.type = :t order by f.createdAt desc",
-                            FileAttachment.class)
-                            .setParameter("u", lecturer)
-                            .setParameter("t", "certificate")
-                            .setMaxResults(1)
-                            .getResultList();
-                    if (files != null && !files.isEmpty()) {
-                        String p = files.get(0).getPath();
-                        String shown = (p != null && p.startsWith("/")) ? p : ("/files/" + p);
-                        req.setAttribute("certificatePath", shown);
-                    }
-                } finally { if (em != null) em.close(); }
-            }
+            // Load teacher certificate (latest) via UserDao
+            try {
+                String p = userDao.getLatestCertificatePath(lecturer);
+                if (p != null && !p.isBlank()) {
+                    String shown = (p.startsWith("/")) ? p : ("/files/" + p);
+                    req.setAttribute("certificatePath", shown);
+                }
+            } catch (SQLException ignored) {}
 
             req.setAttribute("courses", courses);
             req.setAttribute("counts", counts);

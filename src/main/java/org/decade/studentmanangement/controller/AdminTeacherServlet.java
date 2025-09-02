@@ -1,16 +1,12 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.decade.studentmanangement.dao.UserDao;
-import org.decade.studentmanangement.model.FileAttachment;
 import org.decade.studentmanangement.model.StaffUser;
 
 import java.io.IOException;
@@ -25,11 +21,8 @@ import java.util.UUID;
 @jakarta.servlet.annotation.MultipartConfig
 public class AdminTeacherServlet extends HttpServlet {
 
-        @Resource(name = "services/UserDao")
+        @Inject
         private UserDao userDao;
-
-        @Resource(name = "services/EntityManagerFactory")
-        private EntityManagerFactory emf;
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -69,29 +62,16 @@ public class AdminTeacherServlet extends HttpServlet {
                                                 certPart = req.getPart("certificate");
                                         } catch (Exception ignored) {
                                         }
-                                        if (emf != null && certPart != null && certPart.getSize() > 0) {
+                                        if (certPart != null && certPart.getSize() > 0) {
                                                 String subPath = "certificate-" + UUID.randomUUID().toString() + ".png";
                                                 Path target = FilesServlet.baseDir.resolve(subPath);
                                                 Files.createDirectories(target.getParent());
                                                 try (InputStream in = certPart.getInputStream()) {
                                                         Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
                                                 }
-                                                EntityManager em = null;
-                                                EntityTransaction tx = null;
                                                 try {
-                                                        em = emf.createEntityManager();
-                                                        tx = em.getTransaction();
-                                                        tx.begin();
-                                                        StaffUser owner = em.find(StaffUser.class, id);
-                                                        if (owner != null) {
-                                                                FileAttachment att = new FileAttachment(owner, "certificate", subPath.replace('\\', '/'));
-                                                                em.persist(att);
-                                                        }
-                                                        tx.commit();
-                                                } catch (Exception ex) {
-                                                        if (tx != null && tx.isActive()) tx.rollback();
-                                                } finally {
-                                                        if (em != null) em.close();
+                                                        userDao.addCertificate(id, subPath);
+                                                } catch (SQLException ignored) {
                                                 }
                                         }
                                 } catch (Exception ignored) {

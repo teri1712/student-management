@@ -1,45 +1,15 @@
 <Context>
-
-
-    <Resource name="services/ConnectionService"
-              type="org.decade.studentmanangement.services.ConnectionService"
-              factory="org.decade.studentmanangement.services.factories.ConnectionServiceFactory"
-              singleton="true"
-              username="root"
-              password="root"/>
-
-    <Resource name="services/UserDao"
-              type="org.decade.studentmanangement.dao.UserDao"
-              factory="org.decade.studentmanangement.services.factories.UserServiceFactory"
-              singleton="true"
-    />
-    <Resource name="services/StudentDao"
-              type="org.decade.studentmanangement.dao.StudentDao"
-              factory="org.decade.studentmanangement.services.factories.StudentServiceFactory"
-              singleton="true"
-    />
-    <Resource name="services/CourseDao"
-              type="org.decade.studentmanangement.dao.CourseDao"
-              factory="org.decade.studentmanangement.services.factories.CourseServiceFactory"
-              singleton="true"
-    />
-    <Resource name="services/CourseStudentDao"
-              type="org.decade.studentmanangement.dao.CourseStudentDao"
-              factory="org.decade.studentmanangement.services.factories.StudentCourseServiceFactory"
-              singleton="true"
-    />
-    <Resource name="services/AssessmentDao"
-              type="org.decade.studentmanangement.dao.AssessmentDao"
-              factory="org.decade.studentmanangement.services.factories.AssessmentServiceFactory"
-              singleton="true"
-    />
-
-    <!-- JPA EntityManagerFactory via JNDI ObjectFactory (not a singleton class, container-managed) -->
-    <Resource name="services/EntityManagerFactory"
-              type="jakarta.persistence.EntityManagerFactory"
-              factory="org.decade.studentmanangement.services.factories.EntityManagerFactoryObjectFactory"
-              singleton="true"
+    <!-- JNDI DataSource used by JPA (JTA) -->
+    <Resource name="jdbc/StudentDS"
+              auth="Container"
+              type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+              driverClassName="com.mysql.cj.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/QuanLySinhVien"
               username="root"
               password="root"
+              maxActive="20"
+              maxIdle="10"
+              maxWait="10000"
     />
 </Context>

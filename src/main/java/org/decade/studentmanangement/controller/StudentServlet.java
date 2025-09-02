@@ -1,6 +1,6 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,13 +24,13 @@ import java.util.List;
 @WebServlet("/management/student/*")
 public class StudentServlet extends HttpServlet {
 
-        @Resource(name = "services/StudentDao")
+        @Inject
         private StudentDao studentDao;
 
-        @Resource(name = "services/UserDao")
+        @Inject
         private org.decade.studentmanangement.dao.UserDao userDao;
 
-        @Resource(name = "services/CourseStudentDao")
+        @Inject
         private CourseStudentDao courseStudentDao;
 
         public final int PAGE_LIMIT = 10;
@@ -108,6 +108,7 @@ public class StudentServlet extends HttpServlet {
                 try {
                         Student s = studentDao.getStudent(id);
                         if (s == null) {
+                                System.out.println("new student");
                                 s = new Student(id, fullname, Date.valueOf(birthday), grade, address, notes);
                                 studentDao.addStudent(s);
                                 try {
@@ -121,6 +122,8 @@ public class StudentServlet extends HttpServlet {
                                         // ignore user creation failure to avoid blocking student creation
                                 }
                         } else {
+                                System.out.println("existing student");
+
                                 s.setFullname(fullname);
                                 s.setBirthDay(Date.valueOf(birthday));
                                 s.setNotes(notes);

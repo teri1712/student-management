@@ -1,6 +1,6 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,10 +21,10 @@ import java.util.List;
 public class CourseServlet extends HttpServlet {
 
 
-      @Resource(name = "services/CourseDao")
+      @Inject
       private CourseDao courseDao;
 
-      @Resource(name = "services/CourseStudentDao")
+      @Inject
       private CourseStudentDao courseStudentDao;
 
       public final int PAGE_LIMIT = 10;
