@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Course")
@@ -49,6 +51,18 @@ public class Course {
         @Column(name = "notes")
         @Size(max = 100)
         private String note;
+
+
+        @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+        private List<StudentCourse> studentCourses = new ArrayList<>();
+
+        public List<StudentCourse> getStudentCourses() {
+                return studentCourses;
+        }
+
+        public void setStudentCourses(List<StudentCourse> studentCourses) {
+                this.studentCourses = studentCourses;
+        }
 
         public String getId() {
                 return id;

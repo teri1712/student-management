@@ -30,25 +30,48 @@ Import the schema **once** before first run:
 mysql -u <user> -p < quanlysinhvien.sql
 ```
 
-## 3 – Configure Credentials
+## 3 – Configure Database (Tomcat JNDI Resource)
 
-Open **`webapp/META-INF/persistence.xml`** and adjust the `<properties>` element:
+This app uses a Tomcat-managed DataSource defined in `src/main/webapp/META-INF/context.xml`.
+Adjust credentials and (optionally) the host there:
 
 ```xml
 
-<property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
-<property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/QuanLySinhVien"/>
-<property name="jakarta.persistence.jdbc.user" value="root"/>
-<property name="jakarta.persistence.jdbc.password" value="root"/>
-
-
+<Resource name="jdbc/StudentDS"
+          auth="Container"
+          type="javax.sql.DataSource"
+          factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+          driverClassName="com.mysql.cj.jdbc.Driver"
+          url="jdbc:mysql://localhost:3306/QuanLySinhVien"
+          username="root"
+          password="root"/>
 ```
 
-## 4 – First Run Checklist
+NOTES: When running with Docker Compose, set `localhost` to the `mysql`.
 
-1. MySQL is running and the *quanlysinhvien* schema exists.
+## 4 – First Run Checklist (in case of running without Docker Compose)
+
+1. MySQL is running and the *quanlysinhvien* schemas exists.
 2. Tomcat has been started/restarted.
 3. Navigate to `http://localhost:8080//StudentManangement` – the login page should appear.
+
+## 5 – Build and Run with Docker Compose
+
+Prerequisites:
+
+- Docker and Docker Compose installed
+- Set `localhost` to the `mysql` in `context.xml`
+  Run:
+
+```bash
+docker-compose up --build
+```
+
+What happens:
+
+- The compose file starts two services: `mysql` and `server` (Tomcat).
+- MYSQL's port 3306 is forwarded on localhost. The server's port 8080 is forwarded on localhost.
+- Access http://localhost:8080/ to see the app.
 
 # Student Management – Features and Flows
 
@@ -141,7 +164,9 @@ This document summarizes the application features, role-based flows, and key tec
 ## JPA & DI
 
 - Persistence provider: Hibernate JPA, MySQL backend
-- EntityManagerFactory obtained via JNDI Resource (services/EntityManagerFactory) with custom ObjectFactory
+- JTA DataSource: `java:comp/env/jdbc/StudentDS` configured in `src/main/webapp/META-INF/context.xml` (Tomcat JNDI)
+- EntityManagerFactory created from persistence unit `StudentManangementPU` (JTA); EntityManager is produced per-request
+  via CDI (see Resources.java)
 - Services (CourseService, StudentService, UserService, CourseStudentService, AssessmentService) use JPA (EntityManager
   per operation)
 - JPA hbm2ddl is set to validate; schema provided by SQL script

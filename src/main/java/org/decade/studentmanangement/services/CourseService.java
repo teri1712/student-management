@@ -3,7 +3,6 @@ package org.decade.studentmanangement.services;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import org.decade.studentmanangement.dao.CourseDao;
 import org.decade.studentmanangement.model.Course;
@@ -22,13 +21,9 @@ public class CourseService implements CourseDao {
                 return (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
         }
 
-        private SQLException wrap(Exception e) {
-                return (e instanceof SQLException) ? (SQLException) e : new SQLException(e);
-        }
-
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public Course getCourse(String id, int year) throws SQLException {
+        @Transactional
+        public Course getCourse(String id, int year) throws Exception {
                 try {
                         return em.find(Course.class, new Course.CoursePk(id, year));
                 } catch (Exception e) {
@@ -38,7 +33,7 @@ public class CourseService implements CourseDao {
 
         @Override
         @Transactional
-        public void addCourse(final Course course) throws SQLException {
+        public void addCourse(final Course course) throws Exception {
                 try {
                         em.persist(course);
                 } catch (Exception e) {
@@ -48,19 +43,8 @@ public class CourseService implements CourseDao {
 
         @Override
         @Transactional
-        public int deleteCourse(final String id, final int year) throws SQLException {
+        public int deleteCourse(final String id, final int year) throws Exception {
                 try {
-                        // delete dependent assessments first
-                        Query qa = em.createNativeQuery("delete from QuanLySinhVien.Assessment where idCourse = ? and courseYear = ?");
-                        qa.setParameter(1, id);
-                        qa.setParameter(2, year);
-                        qa.executeUpdate();
-
-                        // delete dependent rows from Student_Course
-                        Query q = em.createNativeQuery("delete from QuanLySinhVien.Student_Course where idCourse = ? and courseYear = ?");
-                        q.setParameter(1, id);
-                        q.setParameter(2, year);
-                        q.executeUpdate();
 
                         Course c = em.find(Course.class, new Course.CoursePk(id, year));
                         if (c != null) {
@@ -70,13 +54,14 @@ public class CourseService implements CourseDao {
                                 return 0;
                         }
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public List<Course> findCourses(String sortBy, int page, int limit) throws SQLException {
+        @Transactional
+        public List<Course> findCourses(String sortBy, int page, int limit) throws Exception {
                 String sort = (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
                 try {
                         String jpql = "select c from Course c order by c." + sort;
@@ -91,7 +76,7 @@ public class CourseService implements CourseDao {
 
         @Override
         @Transactional
-        public int updateCourse(final Course course) throws SQLException {
+        public int updateCourse(final Course course) throws Exception {
                 try {
                         Course managed = em.find(Course.class, new Course.CoursePk(course.getId(), course.getYear()));
                         if (managed == null) {
@@ -103,13 +88,14 @@ public class CourseService implements CourseDao {
                         // Do not update PK fields (id/year) here to align with previous JDBC behavior
                         return 1;
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public List<Course> findCoursesByName(final String name, String sortBy, int page, int limit) throws SQLException {
+        @Transactional
+        public List<Course> findCoursesByName(final String name, String sortBy, int page, int limit) throws Exception {
                 String sort = validateSortBy(sortBy);
                 try {
                         String jpql = "select c from Course c where c.name like :name order by c." + sort;
@@ -119,37 +105,40 @@ public class CourseService implements CourseDao {
                                 .setFirstResult(page * limit)
                                 .getResultList();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public int countCourseByName(String name) throws SQLException {
+        @Transactional
+        public int countCourseByName(String name) throws Exception {
                 try {
                         Long cnt = em.createQuery("select count(c) from Course c where c.name like :name", Long.class)
                                 .setParameter("name", "%" + name + "%")
                                 .getSingleResult();
                         return cnt.intValue();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public int countCourses() throws SQLException {
+        @Transactional
+        public int countCourses() throws Exception {
                 try {
                         Long cnt = em.createQuery("select count(c) from Course c", Long.class).getSingleResult();
                         return cnt.intValue();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public List<Course> findCoursesByLecturer(String lecturerUsername, String sortBy, int page, int limit) throws SQLException {
+        @Transactional
+        public List<Course> findCoursesByLecturer(String lecturerUsername, String sortBy, int page, int limit) throws Exception {
                 String sort = validateSortBy(sortBy);
                 try {
                         String jpql = "select c from Course c where c.lecture = :lecturer order by c." + sort;
@@ -159,26 +148,28 @@ public class CourseService implements CourseDao {
                                 .setFirstResult(page * limit)
                                 .getResultList();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public int countCoursesByLecturer(String lecturerUsername) throws SQLException {
+        @Transactional
+        public int countCoursesByLecturer(String lecturerUsername) throws Exception {
                 try {
                         Long cnt = em.createQuery("select count(c) from Course c where c.lecture = :lecturer", Long.class)
                                 .setParameter("lecturer", lecturerUsername)
                                 .getSingleResult();
                         return cnt.intValue();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public List<Course> findCoursesByLecturerAndYear(String lecturerUsername, int year, String sortBy, int page, int limit) throws SQLException {
+        @Transactional
+        public List<Course> findCoursesByLecturerAndYear(String lecturerUsername, int year, String sortBy, int page, int limit) throws Exception {
                 String sort = validateSortBy(sortBy);
                 try {
                         String jpql = "select c from Course c where c.lecture = :lecturer and c.year = :yr order by c." + sort;
@@ -189,13 +180,14 @@ public class CourseService implements CourseDao {
                                 .setFirstResult(page * limit)
                                 .getResultList();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public int countCoursesByLecturerAndYear(String lecturerUsername, int year) throws SQLException {
+        @Transactional
+        public int countCoursesByLecturerAndYear(String lecturerUsername, int year) throws Exception {
                 try {
                         Long cnt = em.createQuery("select count(c) from Course c where c.lecture = :lecturer and c.year = :yr", Long.class)
                                 .setParameter("lecturer", lecturerUsername)
@@ -203,7 +195,8 @@ public class CourseService implements CourseDao {
                                 .getSingleResult();
                         return cnt.intValue();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 }

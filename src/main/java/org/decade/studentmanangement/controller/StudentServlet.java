@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.decade.studentmanangement.dao.CourseStudentDao;
 import org.decade.studentmanangement.dao.StudentDao;
+import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.StaffUser;
 import org.decade.studentmanangement.model.Student;
 import org.decade.studentmanangement.model.StudentCourse;
@@ -28,7 +29,7 @@ public class StudentServlet extends HttpServlet {
         private StudentDao studentDao;
 
         @Inject
-        private org.decade.studentmanangement.dao.UserDao userDao;
+        private UserDao userDao;
 
         @Inject
         private CourseStudentDao courseStudentDao;
@@ -36,7 +37,7 @@ public class StudentServlet extends HttpServlet {
         public final int PAGE_LIMIT = 10;
 
 
-        private void handleListRequest(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+        private void handleListRequest(HttpServletRequest request, HttpServletResponse response) throws Exception, ServletException, IOException {
                 String query = request.getParameter("query");
                 String sortBy = request.getParameter("sortBy");
                 String pageString = request.getParameter("page");
@@ -91,7 +92,7 @@ public class StudentServlet extends HttpServlet {
                                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/management/editstudent.jsp");
                                 requestDispatcher.forward(req, resp);
                         }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                         e.printStackTrace();
                         resp.sendError(400, "Bad request");
                 }
@@ -122,8 +123,6 @@ public class StudentServlet extends HttpServlet {
                                         // ignore user creation failure to avoid blocking student creation
                                 }
                         } else {
-                                System.out.println("existing student");
-
                                 s.setFullname(fullname);
                                 s.setBirthDay(Date.valueOf(birthday));
                                 s.setNotes(notes);
@@ -136,7 +135,8 @@ public class StudentServlet extends HttpServlet {
                         requestDispatcher.forward(req, resp);
 
 
-                } catch (SQLException e) {
+                } catch (Exception e) {
+                        e.printStackTrace();
                         resp.sendError(400, "Bad request");
                 }
         }
@@ -149,7 +149,7 @@ public class StudentServlet extends HttpServlet {
 
                         resp.setContentType("text/plain;charset=UTF-8");
                         resp.getWriter().write("Delete success");
-                } catch (SQLException e) {
+                } catch (Exception e) {
                         resp.sendError(400, "Bad request");
                 }
         }

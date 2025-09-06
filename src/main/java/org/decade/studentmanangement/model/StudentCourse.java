@@ -2,7 +2,7 @@ package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class StudentCourse {
         @NotNull
         private Course course;
 
-        @OneToMany(mappedBy = "studentCourse", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "studentCourse", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
         @OrderBy("semester DESC, id DESC")
         @Valid
         private List<Assessment> assessments = new ArrayList<>();

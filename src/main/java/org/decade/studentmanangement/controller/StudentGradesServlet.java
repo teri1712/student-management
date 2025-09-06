@@ -1,6 +1,6 @@
 package org.decade.studentmanangement.controller;
 
-import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,13 +12,12 @@ import org.decade.studentmanangement.model.StaffUser;
 import org.decade.studentmanangement.model.StudentCourse;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/student/grades")
 public class StudentGradesServlet extends HttpServlet {
 
-        @Resource(name = "services/CourseStudentDao")
+        @Inject
         private CourseStudentDao courseStudentDao;
 
         @Override
@@ -63,8 +62,8 @@ public class StudentGradesServlet extends HttpServlet {
                         }
 
                         req.getRequestDispatcher("/WEB-INF/student/grades.jsp").forward(req, resp);
-                } catch (SQLException e) {
-                        throw new ServletException(e);
+                } catch (Exception e) {
+                        resp.sendError(400, "Bad request");
                 }
         }
 }

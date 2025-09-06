@@ -1,12 +1,11 @@
 package org.decade.studentmanangement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Student")
@@ -52,8 +51,19 @@ public class Student {
         @Size(max = 100)
         private String notes;
 
+        @OneToMany(mappedBy = "student", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+        private List<StudentCourse> studentCourses = new ArrayList<>();
+
         public String getId() {
                 return id;
+        }
+
+        public List<StudentCourse> getStudentCourses() {
+                return studentCourses;
+        }
+
+        public void setStudentCourses(List<StudentCourse> studentCourses) {
+                this.studentCourses = studentCourses;
         }
 
         public String getFullname() {

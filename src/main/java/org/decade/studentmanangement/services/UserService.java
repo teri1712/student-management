@@ -17,13 +17,9 @@ public class UserService implements UserDao {
         @Inject
         private EntityManager em;
 
-        private SQLException wrap(Exception e) {
-                return (e instanceof SQLException) ? (SQLException) e : new SQLException(e);
-        }
-
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public StaffUser getUser(String username) throws SQLException {
+        @Transactional
+        public StaffUser getUser(String username) throws Exception {
                 try {
                         return em.find(StaffUser.class, username);
                 } catch (Exception e) {
@@ -34,30 +30,32 @@ public class UserService implements UserDao {
 
         @Override
         @Transactional
-        public void addUser(StaffUser user) throws SQLException {
+        public void addUser(StaffUser user) throws Exception {
                 try {
                         em.persist(user);
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
         @Transactional
-        public void addCertificate(String username, String relativePath) throws SQLException {
+        public void addCertificate(String username, String relativePath) throws Exception {
                 try {
                         StaffUser owner = em.find(StaffUser.class, username);
                         if (owner == null) throw new SQLException("User not found: " + username);
                         FileAttachment att = new FileAttachment(owner, "certificate", relativePath.replace('\\', '/'));
                         em.persist(att);
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public String getLatestCertificatePath(String username) throws SQLException {
+        @Transactional
+        public String getLatestCertificatePath(String username) throws Exception {
                 try {
                         List<FileAttachment> list = em.createQuery(
                                         "select f from FileAttachment f where f.owner.userName = :u and f.type = :t order by f.createdAt desc",
@@ -70,13 +68,14 @@ public class UserService implements UserDao {
                         String p = list.get(0).getPath();
                         return p;
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
-        @Transactional(Transactional.TxType.SUPPORTS)
-        public List<FileAttachment> listCertificates(String username) throws SQLException {
+        @Transactional
+        public List<FileAttachment> listCertificates(String username) throws Exception {
                 try {
                         return em.createQuery(
                                         "select f from FileAttachment f where f.owner.userName = :u and f.type = :t order by f.createdAt desc",
@@ -85,7 +84,8 @@ public class UserService implements UserDao {
                                 .setParameter("t", "certificate")
                                 .getResultList();
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 }

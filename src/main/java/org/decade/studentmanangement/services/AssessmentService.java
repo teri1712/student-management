@@ -22,31 +22,36 @@ public class AssessmentService implements AssessmentDao {
         @Inject
         private EntityManager em;
 
-        private SQLException wrap(Exception e) { return (e instanceof SQLException) ? (SQLException) e : new SQLException(e); }
+        ;
 
         @Override
         @Transactional
-        public void addAssessment(String studentId, String courseId, int courseYear, Integer semester, Integer assessYear, int score) throws SQLException {
+        public void addAssessment(String studentId, String courseId, int courseYear, Integer semester, Integer assessYear, int score) throws Exception {
                 try {
                         StudentCourse sc = em.find(StudentCourse.class, new StudentCourseId(studentId, courseId, courseYear));
                         if (sc == null) {
                                 throw new SQLException("Enrollment (StudentCourse) not found");
                         }
                         Assessment a = new Assessment(sc, semester, assessYear, score);
+                        sc.getAssessments().add(a);
                         em.persist(a);
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         @Override
         @Transactional
-        public void importCsv(String courseId, int courseYear, InputStream csvStream) throws SQLException {
+        public void importCsv(String courseId, int courseYear, InputStream csvStream) throws Exception {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(csvStream, StandardCharsets.UTF_8))) {
                         String line;
                         boolean first = true;
                         while ((line = reader.readLine()) != null) {
-                                if (first && line.toLowerCase().contains("student")) { first = false; continue; }
+                                if (first && line.toLowerCase().contains("student")) {
+                                        first = false;
+                                        continue;
+                                }
                                 first = false;
                                 String[] parts = line.split(",");
                                 if (parts.length < 4) continue;
@@ -59,16 +64,22 @@ public class AssessmentService implements AssessmentDao {
                                 StudentCourse sc = em.find(StudentCourse.class, scid);
                                 if (sc == null) continue;
                                 Assessment a = new Assessment(sc, semester, assessYear, score);
+                                sc.getAssessments().add(a);
                                 em.persist(a);
                         }
                 } catch (IOException e) {
                         throw new SQLException(e);
                 } catch (Exception e) {
-                        throw wrap(e);
+                        e.printStackTrace();
+                        throw e;
                 }
         }
 
         private Integer parseIntOrNull(String s) {
-                try { return Integer.parseInt(s.trim()); } catch (Exception e) { return null; }
+                try {
+                        return Integer.parseInt(s.trim());
+                } catch (Exception e) {
+                        return null;
+                }
         }
 }

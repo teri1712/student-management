@@ -10,7 +10,6 @@ import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.StaffUser;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebServlet("/management/admin/*")
 public class AdminAddAdminServlet extends HttpServlet {
@@ -49,7 +48,7 @@ public class AdminAddAdminServlet extends HttpServlet {
                                 userDao.addUser(admin);
                                 req.setAttribute("success", "Created admin '" + username + "'.");
                         }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                         req.setAttribute("error", "Failed to create admin. Please try again.");
                 }
                 req.getRequestDispatcher("/WEB-INF/management/addadmin.jsp").forward(req, resp);

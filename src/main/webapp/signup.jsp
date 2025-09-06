@@ -1,3 +1,4 @@
+<%@ page import="org.decade.studentmanangement.model.StaffUser" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="false" %>
 <%
     HttpSession session = request.getSession(false);
@@ -6,8 +7,8 @@
         // Redirect by role if already logged in
         Object u = session.getAttribute("user");
         String role = null;
-        if (u instanceof org.decade.studentmanangement.model.StaffUser) {
-            role = ((org.decade.studentmanangement.model.StaffUser) u).getRole();
+        if (u instanceof StaffUser) {
+            role = ((StaffUser) u).getRole();
         }
         String target;
         if ("admin".equalsIgnoreCase(role)) {

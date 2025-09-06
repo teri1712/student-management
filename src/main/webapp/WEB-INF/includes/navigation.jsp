@@ -1,3 +1,4 @@
+<%@ page import="org.decade.studentmanangement.model.StaffUser" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="ISO-8859-1" %>
 <link href="${pageContext.request.contextPath}/css/navigation.css" rel="stylesheet">
 <div class="col-md-4 col-lg-3 sidebar shadow-sm">
@@ -8,8 +9,8 @@
                 String role = null;
                 jakarta.servlet.http.HttpSession navSession = request.getSession(false);
                 Object u = navSession == null ? null : navSession.getAttribute("user");
-                if (u instanceof org.decade.studentmanangement.model.StaffUser) {
-                    role = ((org.decade.studentmanangement.model.StaffUser) u).getRole();
+                if (u instanceof StaffUser) {
+                    role = ((StaffUser) u).getRole();
                 }
                 boolean isAdmin = "admin".equalsIgnoreCase(role);
                 boolean isTeacher = "teacher".equalsIgnoreCase(role);

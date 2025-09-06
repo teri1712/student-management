@@ -12,30 +12,30 @@ import jakarta.persistence.Persistence;
 @ApplicationScoped
 public class Resources {
 
-    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("StudentManangementPU");
+        private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("StudentManangementPU");
 
-    @Produces
-    @ApplicationScoped
-    public EntityManagerFactory produceEntityManagerFactory() {
-        return emf;
-    }
-
-    @Produces
-    @RequestScoped
-    public EntityManager produceEntityManager(EntityManagerFactory emf) {
-        return emf.createEntityManager();
-    }
-
-    public void closeEntityManager(@Disposes EntityManager em) {
-        if (em != null && em.isOpen()) {
-            em.close();
+        @Produces
+        @ApplicationScoped
+        public EntityManagerFactory produceEntityManagerFactory() {
+                return emf;
         }
-    }
 
-    @PreDestroy
-    public void shutdown() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
+        @Produces
+        @RequestScoped
+        public EntityManager produceEntityManager(EntityManagerFactory emf) {
+                return emf.createEntityManager();
         }
-    }
+
+        public void closeEntityManager(@Disposes EntityManager em) {
+                if (em != null && em.isOpen()) {
+                        em.close();
+                }
+        }
+
+        @PreDestroy
+        public void shutdown() {
+                if (emf != null && emf.isOpen()) {
+                        emf.close();
+                }
+        }
 }

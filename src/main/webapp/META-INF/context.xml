@@ -1,5 +1,4 @@
 <Context>
-    <!-- JNDI DataSource used by JPA (JTA) -->
     <Resource name="jdbc/StudentDS"
               auth="Container"
               type="javax.sql.DataSource"
@@ -12,4 +11,5 @@
               maxIdle="10"
               maxWait="10000"
     />
+
 </Context>

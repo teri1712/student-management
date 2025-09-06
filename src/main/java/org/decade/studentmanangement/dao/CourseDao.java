@@ -2,32 +2,32 @@ package org.decade.studentmanangement.dao;
 
 import org.decade.studentmanangement.model.Course;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface CourseDao {
-        Course getCourse(String id, int year) throws SQLException;
+        Course getCourse(String id, int year) throws Exception;
 
-        void addCourse(Course course) throws SQLException;
+        void addCourse(Course course) throws Exception;
 
-        int deleteCourse(String id, int year) throws SQLException;
+        int deleteCourse(String id, int year) throws Exception;
 
-        List<Course> findCourses(String sortBy, int page, int limit) throws SQLException;
+        List<Course> findCourses(String sortBy, int page, int limit) throws Exception;
 
-        int updateCourse(Course course) throws SQLException;
+        int updateCourse(Course course) throws Exception;
 
-        List<Course> findCoursesByName(String name, String sortBy, int page, int limit) throws SQLException;
+        List<Course> findCoursesByName(String name, String sortBy, int page, int limit) throws Exception;
 
-        int countCourseByName(String name) throws SQLException;
+        int countCourseByName(String name) throws Exception;
 
-        int countCourses() throws SQLException;
+        int countCourses() throws Exception;
 
         // New: lecturer-based queries for teacher views
-        List<Course> findCoursesByLecturer(String lecturerUsername, String sortBy, int page, int limit) throws SQLException;
+        List<Course> findCoursesByLecturer(String lecturerUsername, String sortBy, int page, int limit) throws Exception;
 
-        int countCoursesByLecturer(String lecturerUsername) throws SQLException;
+        int countCoursesByLecturer(String lecturerUsername) throws Exception;
 
         // Lecturer + year filters for teacher view
-        List<Course> findCoursesByLecturerAndYear(String lecturerUsername, int year, String sortBy, int page, int limit) throws SQLException;
-        int countCoursesByLecturerAndYear(String lecturerUsername, int year) throws SQLException;
+        List<Course> findCoursesByLecturerAndYear(String lecturerUsername, int year, String sortBy, int page, int limit) throws Exception;
+
+        int countCoursesByLecturerAndYear(String lecturerUsername, int year) throws Exception;
 }

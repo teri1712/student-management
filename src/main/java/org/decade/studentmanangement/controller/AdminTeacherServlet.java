@@ -79,7 +79,7 @@ public class AdminTeacherServlet extends HttpServlet {
 
                                 req.setAttribute("success", "Created teacher account '" + id + "' (default password equals ID)");
                         }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                         req.setAttribute("error", "Failed to create teacher account. Please try again.");
                 }
                 req.getRequestDispatcher("/WEB-INF/management/addteacher.jsp").forward(req, resp);

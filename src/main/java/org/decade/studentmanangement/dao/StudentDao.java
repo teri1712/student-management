@@ -2,23 +2,22 @@ package org.decade.studentmanangement.dao;
 
 import org.decade.studentmanangement.model.Student;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface StudentDao {
-      Student getStudent(String id) throws SQLException;
+        Student getStudent(String id) throws Exception;
 
-      void addStudent(Student student) throws SQLException;
+        void addStudent(Student student) throws Exception;
 
-      void updateStudent(Student student) throws SQLException;
+        void updateStudent(Student student) throws Exception;
 
-      List<Student> findStudentsByName(String name, String sortBy, int page, int limit) throws SQLException;
+        List<Student> findStudentsByName(String name, String sortBy, int page, int limit) throws Exception;
 
-      int countStudentsByName(String name) throws SQLException;
+        int countStudentsByName(String name) throws Exception;
 
-      int countStudents() throws SQLException;
+        int countStudents() throws Exception;
 
-      List<Student> findStudents(int page, String sortBy, int limit) throws SQLException;
+        List<Student> findStudents(int page, String sortBy, int limit) throws Exception;
 
-      void deleteStudent(String id) throws SQLException;
+        void deleteStudent(String id) throws Exception;
 }
