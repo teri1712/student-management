@@ -111,31 +111,13 @@
                     </div>
                 </div>
                 <div class="card-body p-4">
-                    <div class="mb-4">
-                        <form class="row g-2 align-items-center"
-                              action="${pageContext.request.contextPath}/management/assessment" method="post"
-                              enctype="multipart/form-data">
-                            <input type="hidden" name="op" value="import">
-                            <input type="hidden" name="courseId" value="<%=course.getId()%>">
-                            <input type="hidden" name="year" value="<%=course.getYear()%>">
-                            <div class="col-auto">
-                                <label class="col-form-label">Import CSV</label>
-                            </div>
-                            <div class="col-auto">
-                                <input type="file" name="file" accept=".csv" class="form-control">
-                            </div>
-                            <div class="col-auto">
-                                <button class="btn btn-primary" type="submit">Upload</button>
-                            </div>
-                        </form>
-                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Add Assessment (Sem, Year, Score)</th>
+                                <th>Latest Score</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                             </thead>
@@ -148,49 +130,7 @@
                                 </td>
                                 <td><%= student.getStudent().getFullname() %>
                                 </td>
-                                <td>
-                                    <div class="mb-2">
-                                        <% if (student.getAssessments() != null && !student.getAssessments().isEmpty()) { %>
-                                        <table class="table table-sm table-bordered mb-2">
-                                            <thead>
-                                            <tr>
-                                                <th>Sem</th>
-                                                <th>Year</th>
-                                                <th>Score</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <% for (Assessment assessment : student.getAssessments()) { %>
-                                            <tr>
-                                                <td><%= assessment.getSemester() %>
-                                                </td>
-                                                <td><%= assessment.getAssessYear() %>
-                                                </td>
-                                                <td><%= assessment.getScore() %>
-                                                </td>
-                                            </tr>
-                                            <% } %>
-                                            </tbody>
-                                        </table>
-                                        <% } %>
-                                    </div>
-                                    <form action="${pageContext.request.contextPath}/management/assessment"
-                                          method="post" class="d-flex gap-1">
-                                        <input type="hidden" name="op" value="add">
-                                        <input type="hidden" name="courseId" value="<%= course.getId() %>">
-                                        <input type="hidden" name="year" value="<%= course.getYear() %>">
-                                        <input type="hidden" name="studentId"
-                                               value="<%= student.getStudent().getId() %>">
-                                        <input type="number" name="semester" min="1" max="3"
-                                               class="form-control form-control-sm" placeholder="Sem">
-                                        <input type="number" name="assessYear" class="form-control form-control-sm"
-                                               placeholder="Year" value="<%= course.getYear() %>">
-                                        <input type="number" name="score" class="form-control form-control-sm"
-                                               placeholder="Score" required>
-
-                                        <button type="submit" class="btn btn-outline-success btn-sm">Add</button>
-                                    </form>
-                                </td>
+                                <td><%= student.getScore() == null ? "-" : student.getScore() %></td>
                                 <td class="text-nowrap text-center">
                                     <div class="d-inline">
                                         <button type="button" class="btn btn-outline-danger btn-sm"

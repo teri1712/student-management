@@ -98,6 +98,7 @@ public class TeacherCoursesServlet extends HttpServlet {
 
                         req.getRequestDispatcher("/WEB-INF/teacher/courses.jsp").forward(req, resp);
                 } catch (Exception e) {
+                        e.printStackTrace();
                         resp.sendError(400, "Bad request");
                 }
         }

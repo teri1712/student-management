@@ -9,10 +9,6 @@ import jakarta.transaction.TransactionManager;
 import jakarta.transaction.TransactionSynchronizationRegistry;
 import jakarta.transaction.UserTransaction;
 
-/**
- * Provides JTA components for CDI without relying on JNDI writes in Tomcat.
- * Uses Narayana static accessors, avoiding the need to bind into java:comp.
- */
 @ApplicationScoped
 @Alternative
 @Priority(1)

@@ -55,6 +55,7 @@
                                 <th>Year</th>
                                 <th>Lecturer</th>
                                 <th>Score</th>
+                                <th class="text-center">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -69,6 +70,9 @@
                                 <td><%= sc.getCourse().getLecture() %>
                                 </td>
                                 <td><%= sc.getScore() != null ? sc.getScore().toString() : "Haven't finished" %>
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-primary" href="${pageContext.request.contextPath}/student/course?courseId=<%= sc.getCourse().getId() %>&year=<%= sc.getCourse().getYear() %>">Enter</a>
                                 </td>
                             </tr>
                             <% } %>

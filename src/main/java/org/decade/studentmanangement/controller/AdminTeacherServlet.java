@@ -2,6 +2,7 @@ package org.decade.studentmanangement.controller;
 
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet("/management/teacher/*")
-@jakarta.servlet.annotation.MultipartConfig
+@MultipartConfig
 public class AdminTeacherServlet extends HttpServlet {
 
         @Inject

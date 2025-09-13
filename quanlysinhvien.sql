@@ -110,6 +110,22 @@ create index idx_student_fullname on QuanLySinhVien.Student (fullname);
 alter table QuanLySinhVien.FileAttachment
     add foreign key (ownerUsername) references StaffUser (username);
 
+-- Notifications for courses
+create table QuanLySinhVien.Notification
+(
+    id              bigint auto_increment,
+    idCourse        char(10),
+    courseYear      int,
+    teacherUsername char(100),
+    content         nvarchar(255),
+    createdAt       timestamp default current_timestamp,
+    constraint PK_Notification primary key (id),
+    foreign key (idCourse, courseYear) references QuanLySinhVien.Course (id, courseYear),
+    foreign key (teacherUsername) references QuanLySinhVien.StaffUser (username)
+);
+
+create index idx_notif_course on QuanLySinhVien.Notification (idCourse, courseYear, id);
+
 -- Insert sample data
 INSERT INTO QuanLySinhVien.Student (id, fullname, birthday, grade, address, notes)
 VALUES ('SV001', 'Nguyen Van An', '2000-05-15', 3, 'Ha Noi', 'Good student'),
@@ -147,6 +163,12 @@ VALUES ('SV001', 'COMP101', 2025),
 
 INSERT INTO QuanLySinhVien.FileAttachment (ownerUsername, path)
 VALUES ('teacher1', 'certificate-sample.png');
+
+-- Sample course notifications
+INSERT INTO QuanLySinhVien.Notification (idCourse, courseYear, teacherUsername, content)
+VALUES ('COMP101', 2025, 'teacher1', 'Welcome to the course!'),
+       ('COMP101', 2025, 'teacher1', 'Assignment 1 released.'),
+       ('MATH201', 2025, 'teacher1', 'Midterm scheduled next week.');
 
 INSERT INTO QuanLySinhVien.Club (id, clubName, description)
 VALUES ('CLUB01', 'IT Club', 'Club for students interested in Information Technology'),

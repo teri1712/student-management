@@ -14,6 +14,7 @@
         <class>org.decade.studentmanangement.model.StudentCourse</class>
         <class>org.decade.studentmanangement.model.Assessment</class>
         <class>org.decade.studentmanangement.model.FileAttachment</class>
+        <class>org.decade.studentmanangement.model.Notification</class>
 
         <properties>
             <!-- Hibernate settings -->

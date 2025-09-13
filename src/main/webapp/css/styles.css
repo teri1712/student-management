@@ -106,3 +106,9 @@ body {
         width: 100%;
     }
 }
+
+/* Notification list item: keep default border color and only add a left accent */
+.notif-item {
+    border-color: var(--bs-border-color) !important; /* reset any border-warning color */
+    border-left: .25rem solid var(--bs-warning);
+}
