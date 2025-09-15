@@ -10,7 +10,6 @@ public interface UserDao {
 
         void addUser(StaffUser user) throws Exception;
 
-        // CDI/JPA-based helpers for teacher certificate feature
         void addCertificate(String username, String relativePath) throws Exception;
 
         String getLatestCertificatePath(String username) throws Exception;

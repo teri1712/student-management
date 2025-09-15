@@ -32,7 +32,7 @@ public class FilesServlet extends HttpServlet {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-                String pathInfo = req.getPathInfo(); // like /teacher/username/file.png
+                String pathInfo = req.getPathInfo(); // /teacher/username/file.png
                 if (pathInfo == null || pathInfo.equals("/")) {
                         resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "No file specified");
                         return;
@@ -45,7 +45,6 @@ public class FilesServlet extends HttpServlet {
                 String mime = req.getServletContext().getMimeType(requested.getFileName().toString());
                 if (mime == null) mime = "application/octet-stream";
                 resp.setContentType(mime);
-                resp.setHeader("Cache-Control", "max-age=3600, public");
                 resp.setContentLengthLong(Files.size(requested));
                 InputStream in = Files.newInputStream(requested);
                 OutputStream out = resp.getOutputStream();

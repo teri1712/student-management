@@ -28,19 +28,14 @@ public class TeacherCourseDetailsServlet extends HttpServlet {
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 HttpSession session = req.getSession(false);
-                Object u = session == null ? null : session.getAttribute("user");
-                if (!(u instanceof StaffUser)) {
-                        resp.sendRedirect(req.getContextPath() + "/login.jsp");
-                        return;
-                }
-                StaffUser user = (StaffUser) u;
+                StaffUser user = (StaffUser) session.getAttribute("user");
                 String lecturer = user.getUserName();
 
                 String courseId = req.getParameter("courseId");
                 int year = Integer.parseInt(req.getParameter("year"));
                 try {
                         Course course = courseDao.getCourse(courseId, year);
-                        if (course == null || course.getLecture() == null || !course.getLecture().equals(lecturer)) {
+                        if (!course.getLecture().equals(lecturer)) {
                                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: not your course");
                                 return;
                         }
@@ -51,6 +46,7 @@ public class TeacherCourseDetailsServlet extends HttpServlet {
                         req.getRequestDispatcher("/WEB-INF/teacher/course_details.jsp").forward(req, resp);
                 } catch (Exception e) {
                         resp.sendError(400, "Bad request");
+                        e.printStackTrace();
                 }
         }
 }

@@ -7,11 +7,6 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-/**
- * Redirects unauthenticated users to /login.jsp.
- * A user is considered authenticated when a non-null "user" attribute
- * exists in the HttpSession.
- */
 public class AuthenticationFilter implements Filter {
 
         @Override

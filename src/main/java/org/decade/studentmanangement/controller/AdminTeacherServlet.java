@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import org.decade.studentmanangement.dao.UserDao;
 import org.decade.studentmanangement.model.StaffUser;
 
@@ -15,7 +16,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet("/management/teacher/*")
@@ -40,7 +40,8 @@ public class AdminTeacherServlet extends HttpServlet {
                 String id = req.getParameter("id");
                 String fullname = req.getParameter("fullname");
                 String submit = req.getParameter("submit");
-                if (submit == null) submit = ""; // to avoid NPE in some containers
+                if (submit == null)
+                        submit = "";
 
                 if (id == null || id.isBlank() || fullname == null || fullname.isBlank()) {
                         req.setAttribute("error", "ID and Full Name are required");
@@ -56,32 +57,22 @@ public class AdminTeacherServlet extends HttpServlet {
                                 StaffUser teacher = new StaffUser(fullname, id, id, "teacher");
                                 userDao.addUser(teacher);
 
-                                // Handle uploaded certificate (optional)
-                                try {
-                                        jakarta.servlet.http.Part certPart = null;
-                                        try {
-                                                certPart = req.getPart("certificate");
-                                        } catch (Exception ignored) {
-                                        }
-                                        if (certPart != null && certPart.getSize() > 0) {
-                                                String subPath = "certificate-" + UUID.randomUUID().toString() + ".png";
-                                                Path target = FilesServlet.baseDir.resolve(subPath);
-                                                Files.createDirectories(target.getParent());
-                                                try (InputStream in = certPart.getInputStream()) {
-                                                        Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-                                                }
-                                                try {
-                                                        userDao.addCertificate(id, subPath);
-                                                } catch (SQLException ignored) {
-                                                }
-                                        }
-                                } catch (Exception ignored) {
+                                Part certPart = null;
+                                certPart = req.getPart("certificate");
+                                if (certPart != null && certPart.getSize() > 0) {
+                                        String subPath = "certificate-" + UUID.randomUUID() + ".png";
+                                        Path target = FilesServlet.baseDir.resolve(subPath);
+                                        Files.createDirectories(target.getParent());
+                                        InputStream in = certPart.getInputStream();
+                                        Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+                                        userDao.addCertificate(id, subPath);
                                 }
 
                                 req.setAttribute("success", "Created teacher account '" + id + "' (default password equals ID)");
                         }
                 } catch (Exception e) {
                         req.setAttribute("error", "Failed to create teacher account. Please try again.");
+                        e.printStackTrace();
                 }
                 req.getRequestDispatcher("/WEB-INF/management/addteacher.jsp").forward(req, resp);
         }

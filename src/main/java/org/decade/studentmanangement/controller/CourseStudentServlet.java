@@ -47,6 +47,7 @@ public class CourseStudentServlet extends HttpServlet {
                         request.setAttribute("students", students);
                         request.getRequestDispatcher("/WEB-INF/management/editcourse.jsp").forward(request, response);
                 } catch (Exception e) {
+                        e.printStackTrace();
                         response.sendError(400, "Bad request");
                 }
         }

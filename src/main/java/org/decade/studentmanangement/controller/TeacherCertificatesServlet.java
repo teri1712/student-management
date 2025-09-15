@@ -23,12 +23,7 @@ public class TeacherCertificatesServlet extends HttpServlet {
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 HttpSession session = req.getSession(false);
-                Object u = session == null ? null : session.getAttribute("user");
-                if (!(u instanceof StaffUser)) {
-                        resp.sendRedirect(req.getContextPath() + "/login.jsp");
-                        return;
-                }
-                StaffUser user = (StaffUser) u;
+                StaffUser user = (StaffUser) session.getAttribute("user");
                 String username = user.getUserName();
 
                 try {

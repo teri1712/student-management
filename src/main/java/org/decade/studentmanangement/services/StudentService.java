@@ -119,8 +119,6 @@ public class StudentService implements StudentDao {
         @Transactional
         public void deleteStudent(final String id) throws Exception {
                 try {
-                        // delete from join table first
-
                         em.createNativeQuery("delete from QuanLySinhVien.Student_Course where idStudent = ?")
                                 .setParameter(1, id)
                                 .executeUpdate();

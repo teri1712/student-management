@@ -11,11 +11,11 @@
             role = ((StaffUser) u).getRole();
         }
         String target;
-        if ("admin".equalsIgnoreCase(role)) {
+        if ("admin".equals(role)) {
             target = "/management/student/list";
-        } else if ("teacher".equalsIgnoreCase(role)) {
+        } else if ("teacher".equals(role)) {
             target = "/teacher/courses";
-        } else if ("student".equalsIgnoreCase(role)) {
+        } else if ("student".equals(role)) {
             target = "/student/grades";
         } else {
             target = "/management/student/list"; // default fallback

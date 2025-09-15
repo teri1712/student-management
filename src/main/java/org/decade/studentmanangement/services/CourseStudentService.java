@@ -28,7 +28,7 @@ public class CourseStudentService implements CourseStudentDao {
                         StudentCourseId id = new StudentCourseId(student, course, year);
                         StudentCourse sc = em.find(StudentCourse.class, id);
                         if (sc != null) {
-                                return 0; // already exists
+                                return 0;
                         }
                         sc = new StudentCourse();
                         sc.setId(id);
@@ -44,7 +44,6 @@ public class CourseStudentService implements CourseStudentDao {
         @Override
         public int updateStudentScore(final String student, final String course, final int year, final int score)
                 throws Exception {
-                // Score is derived from assessments; direct update is not supported.
                 return 0;
         }
 

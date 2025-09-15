@@ -85,8 +85,8 @@ public class CourseServlet extends HttpServlet {
                                 requestDispatcher.forward(request, response);
                         }
                 } catch (Exception e) {
-//                  response.sendError(400, "Bad request");
-                        throw new RuntimeException(e);
+                        response.sendError(400, "Bad request");
+                        e.printStackTrace();
                 }
         }
 
@@ -129,8 +129,8 @@ public class CourseServlet extends HttpServlet {
                         RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/management/editcourse.jsp");
                         requestDispatcher.forward(req, resp);
 
-
                 } catch (Exception e) {
+                        e.printStackTrace();
                         resp.sendError(400, "Bad request");
                 }
         }

@@ -15,7 +15,9 @@ import org.decade.studentmanangement.model.StaffUser;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/teacher/courses")
 public class TeacherCoursesServlet extends HttpServlet {
@@ -45,16 +47,10 @@ public class TeacherCoursesServlet extends HttpServlet {
                 String sortBy = req.getParameter("sortBy");
                 if (sortBy == null) sortBy = "year";
                 Integer filterYear = null;
-                try {
-                        String y = req.getParameter("year");
-                        if (y != null && !y.isBlank()) filterYear = Integer.parseInt(y);
-                } catch (Exception ignored) {
-                }
-                int page = 0;
-                try {
-                        page = Integer.parseInt(req.getParameter("page"));
-                } catch (Exception ignored) {
-                }
+                String y = req.getParameter("year");
+                if (y != null)
+                        filterYear = Integer.parseInt(y);
+                int page = Integer.parseInt(req.getParameter("page"));
                 int limit = PAGE_LIMIT;
 
                 try {
@@ -68,7 +64,7 @@ public class TeacherCoursesServlet extends HttpServlet {
                                 total = courseDao.countCoursesByLecturer(lecturer);
                         }
 
-                        java.util.Map<String, Integer> counts = new java.util.HashMap<>();
+                        Map<String, Integer> counts = new HashMap<>();
                         for (Course c : courses) {
                                 try {
                                         int cnt = courseStudentDao.countStudentsOfCourse(c.getId(), c.getYear());
@@ -78,13 +74,9 @@ public class TeacherCoursesServlet extends HttpServlet {
                                 }
                         }
 
-                        // Load teacher certificate (latest) via UserDao
                         try {
                                 String p = userDao.getLatestCertificatePath(lecturer);
-                                if (p != null && !p.isBlank()) {
-                                        String shown = (p.startsWith("/")) ? p : ("/files/" + p);
-                                        req.setAttribute("certificatePath", shown);
-                                }
+                                req.setAttribute("certificatePath", p);
                         } catch (SQLException ignored) {
                         }
 

@@ -2,7 +2,10 @@ package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 
@@ -20,12 +23,12 @@ public class FileAttachment {
         private StaffUser owner;
 
         @Size(max = 50)
-        private String type; // e.g., "certificate"
+        private String type;
 
         @Column(name = "path", length = 255)
         @NotBlank
         @Size(max = 255)
-        private String path; // web path or storage path
+        private String path;
 
         @Column(name = "createdAt", nullable = false, updatable = false)
         @PastOrPresent

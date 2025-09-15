@@ -16,7 +16,6 @@ public class CourseService implements CourseDao {
         @Inject
         private EntityManager em;
 
-        // Helpers for sorting and exception wrapping
         private String validateSortBy(String sortBy) {
                 return (sortBy == null || sortBy.isBlank()) ? "id" : sortBy;
         }
@@ -85,7 +84,6 @@ public class CourseService implements CourseDao {
                         managed.setName(course.getName());
                         managed.setLecture(course.getLecture());
                         managed.setNote(course.getNote());
-                        // Do not update PK fields (id/year) here to align with previous JDBC behavior
                         return 1;
                 } catch (Exception e) {
                         e.printStackTrace();

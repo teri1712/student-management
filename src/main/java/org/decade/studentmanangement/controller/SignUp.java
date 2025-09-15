@@ -31,7 +31,7 @@ public class SignUp extends HttpServlet {
                 // Ensure only admins can reach; then redirect to new admin add page
                 HttpSession session = request.getSession(false);
                 Object u = session == null ? null : session.getAttribute("user");
-                if (!(u instanceof StaffUser) || !"admin".equalsIgnoreCase(((StaffUser) u).getRole())) {
+                if (!(u instanceof StaffUser) || !"admin".equals(((StaffUser) u).getRole())) {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: admin role required");
                         return;
                 }

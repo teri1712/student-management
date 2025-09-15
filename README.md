@@ -85,14 +85,19 @@ This document summarizes the application features, role-based flows, and key tec
     - Create teacher accounts (username/password default to teacher ID)
     - Create admin accounts (admin-only page)
     - Add students to courses
-    - Manage assessments (add per-student assessment for a course or CSV import)
+    - View latest scores on the course edit page (read-only)
 - Teacher
     - View “My Courses” with sorting and optional filter by year
     - See student count per course
     - View students of a selected course and their latest scores
+    - Add assessments for students (inline form) and import CSV on the teacher course page
+    - Post course notifications (students see them in real time via simple polling)
     - See their certificate on the main teacher page
 - Student
     - View “My Grades” with optional year filter
+    - Enter a course from the grades table to see details
+    - See classmates enrolled in the course
+    - See course notifications in real time (simple polling)
     - See latest score per enrolled course, average score and GPA
 
 ## Authentication & Authorization
@@ -143,10 +148,11 @@ This document summarizes the application features, role-based flows, and key tec
 
 - Assessments record per-student scoring for a course and semester/year
 - Latest score for a StudentCourse is derived from the most recent Assessment
-- Admin can add one assessment inline for a student from the course edit page
-- CSV import of assessments supported at the course edit page
+- Teacher can add one assessment inline for a student on the teacher course page
+- CSV import of assessments supported on the teacher course page (/teacher/assessment)
     - CSV format: studentId,semester,assessYear,score
     - Sample file: samples/assessments-sample.csv
+- Admin course edit page shows latest score (read-only)
 - Student GPA calculation ignores enrollments with no assessments
 
 ## Teacher Views
@@ -154,12 +160,30 @@ This document summarizes the application features, role-based flows, and key tec
 - My Courses (sortable, filter by year)
     - Displays student count per course
     - Link to Course details page to see enrolled students and latest scores
+- Teacher Course page
+    - Add assessments inline and import CSV for scores
+    - Post course notifications (Bootstrap-styled list, left accent)
+
+## Course Notifications
+
+- Endpoint: GET /notifications?courseId={id}&year={year}&sinceId={lastId}
+    - Returns JSON array of latest notifications (ordered by id desc)
+- Endpoint: POST /notifications (teacher only; must own the course)
+    - Body params: courseId, year, content
+- UI/Behavior
+    - Implemented with a lightweight polling script (no long-polling)
+    - Shared JS: scripts/course-notifs.js (imported by teacher and student course pages)
+    - Renders with Bootstrap list-group items; no inline script in JSP
 
 ## Student Views
 
 - My Grades
     - Optional filter by year
+    - Each row has an Enter button to open the selected course
     - Displays latest score per course, and aggregates average score and GPA (score/25)
+- Course Details (for student)
+    - Shows classmates (student ID and name only)
+    - Shows course notifications with the same Bootstrap styling and polling behavior
 
 ## JPA & DI
 
@@ -177,3 +201,4 @@ This document summarizes the application features, role-based flows, and key tec
     - Creates all tables, constraints, and indexes
     - Seeds exactly one initial admin: admin / admin123
     - Provides sample students, courses, and enrollments
+    - Adds Notification table (for course announcements), index on (idCourse, courseYear, id), and sample notifications

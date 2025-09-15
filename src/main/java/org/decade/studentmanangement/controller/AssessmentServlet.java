@@ -37,13 +37,13 @@ public class AssessmentServlet extends HttpServlet {
                 int year = Integer.parseInt(req.getParameter("year"));
 
                 try {
-                        if ("add".equalsIgnoreCase(op)) {
+                        if ("add".equals(op)) {
                                 String studentId = req.getParameter("studentId");
-                                Integer semester = parseIntOrNull(req.getParameter("semester"));
-                                Integer assessYear = parseIntOrNull(req.getParameter("assessYear"));
+                                Integer semester = Integer.parseInt(req.getParameter("semester"));
+                                Integer assessYear = Integer.parseInt(req.getParameter("assessYear"));
                                 int score = Integer.parseInt(req.getParameter("score"));
                                 assessmentDao.addAssessment(studentId, courseId, year, semester, assessYear, score);
-                        } else if ("import".equalsIgnoreCase(op)) {
+                        } else if ("import".equals(op)) {
                                 Part filePart = req.getPart("file");
                                 if (filePart != null && filePart.getSize() > 0) {
                                         assessmentDao.importCsv(courseId, year, filePart.getInputStream());
@@ -57,14 +57,8 @@ public class AssessmentServlet extends HttpServlet {
                         req.getRequestDispatcher("/WEB-INF/management/editcourse.jsp").forward(req, resp);
                 } catch (Exception e) {
                         resp.sendError(400, "Bad request");
+                        e.printStackTrace();
                 }
         }
 
-        private Integer parseIntOrNull(String s) {
-                try {
-                        return Integer.parseInt(s);
-                } catch (Exception e) {
-                        return null;
-                }
-        }
 }

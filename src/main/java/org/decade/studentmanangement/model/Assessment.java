@@ -2,7 +2,10 @@ package org.decade.studentmanangement.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.time.Instant;
 
@@ -14,7 +17,6 @@ public class Assessment {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        // Link only to StudentCourse via composite foreign key
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumns({
                 @JoinColumn(name = "idStudent", referencedColumnName = "idStudent"),
@@ -29,13 +31,13 @@ public class Assessment {
         @NotNull
         @Min(1)
         @Max(2)
-        private Integer semester; // 1 or 2 (or other convention)
+        private Integer semester;
 
         @Column(name = "assessYear")
         @NotNull
         @Min(1900)
         @Max(2100)
-        private Integer assessYear; // academic year of the assessment (e.g., 2025)
+        private Integer assessYear;
 
         @Column(name = "score")
         @Min(0)
@@ -56,16 +58,47 @@ public class Assessment {
                 this.score = score;
         }
 
-        public Long getId() { return id; }
-        public StudentCourse getStudentCourse() { return studentCourse; }
-        public Integer getSemester() { return semester; }
-        public Integer getAssessYear() { return assessYear; }
-        public Integer getScore() { return score; }
-        public Instant getAssessedAt() { return assessedAt; }
+        public Long getId() {
+                return id;
+        }
 
-        public void setId(Long id) { this.id = id; }
-        public void setStudentCourse(StudentCourse studentCourse) { this.studentCourse = studentCourse; }
-        public void setSemester(Integer semester) { this.semester = semester; }
-        public void setAssessYear(Integer assessYear) { this.assessYear = assessYear; }
-        public void setScore(Integer score) { this.score = score; }
+        public StudentCourse getStudentCourse() {
+                return studentCourse;
+        }
+
+        public Integer getSemester() {
+                return semester;
+        }
+
+        public Integer getAssessYear() {
+                return assessYear;
+        }
+
+        public Integer getScore() {
+                return score;
+        }
+
+        public Instant getAssessedAt() {
+                return assessedAt;
+        }
+
+        public void setId(Long id) {
+                this.id = id;
+        }
+
+        public void setStudentCourse(StudentCourse studentCourse) {
+                this.studentCourse = studentCourse;
+        }
+
+        public void setSemester(Integer semester) {
+                this.semester = semester;
+        }
+
+        public void setAssessYear(Integer assessYear) {
+                this.assessYear = assessYear;
+        }
+
+        public void setScore(Integer score) {
+                this.score = score;
+        }
 }

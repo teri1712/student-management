@@ -23,27 +23,16 @@ public class StudentGradesServlet extends HttpServlet {
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
                 HttpSession session = req.getSession(false);
-                Object u = session == null ? null : session.getAttribute("user");
-                if (!(u instanceof StaffUser)) {
-                        resp.sendRedirect(req.getContextPath() + "/login.jsp");
-                        return;
-                }
-                StaffUser user = (StaffUser) u;
-                // For student role, we assume username equals Student.id
+                StaffUser user = session == null ? null : (StaffUser) session.getAttribute("user");
                 String studentId = user.getUserName();
 
-                int year = -1;
-                try {
-                        year = Integer.parseInt(req.getParameter("year"));
-                } catch (Exception ignored) {
-                }
+                int year = Integer.parseInt(req.getParameter("year"));
 
                 try {
                         List<StudentCourse> list = courseStudentDao.getCoursesByStudentInTheYear(studentId, year);
                         req.setAttribute("courses", list);
                         req.setAttribute("year", year);
 
-                        // compute GPA as avg score mapped to 4.0 scale (score/25)
                         if (list != null && !list.isEmpty()) {
                                 double sum = 0.0;
                                 int counted = 0;
@@ -55,8 +44,8 @@ public class StudentGradesServlet extends HttpServlet {
                                 }
                                 if (counted > 0) {
                                         double avg = sum / counted;
-                                        double gpa = Math.round((avg / 25.0) * 100.0) / 10.0;
-                                        req.setAttribute("avgScore", Math.round(avg * 100.0) / 100.0);
+                                        double gpa = Math.round(avg * 4.0 / 10.0);
+                                        req.setAttribute("avgScore", avg);
                                         req.setAttribute("gpa", gpa);
                                 }
                         }

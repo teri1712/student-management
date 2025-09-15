@@ -32,7 +32,8 @@ public class AdminAddAdminServlet extends HttpServlet {
                 String username = req.getParameter("username");
                 String fullname = req.getParameter("fullname");
                 String password = req.getParameter("password");
-                if (password == null || password.isBlank()) password = username; // default
+                if (password == null || password.isBlank())
+                        password = username;
 
                 if (username == null || username.isBlank() || fullname == null || fullname.isBlank()) {
                         req.setAttribute("error", "Username and Full Name are required");

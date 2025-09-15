@@ -12,9 +12,9 @@
                 if (u instanceof StaffUser) {
                     role = ((StaffUser) u).getRole();
                 }
-                boolean isAdmin = "admin".equalsIgnoreCase(role);
-                boolean isTeacher = "teacher".equalsIgnoreCase(role);
-                boolean isStudent = "student".equalsIgnoreCase(role);
+                boolean isAdmin = "admin".equals(role);
+                boolean isTeacher = "teacher".equals(role);
+                boolean isStudent = "student".equals(role);
             %>
             <% if (isAdmin) { %>
             <a href="${pageContext.request.contextPath}/management/course/list"

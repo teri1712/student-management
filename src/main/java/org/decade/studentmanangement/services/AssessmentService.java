@@ -22,8 +22,6 @@ public class AssessmentService implements AssessmentDao {
         @Inject
         private EntityManager em;
 
-        ;
-
         @Override
         @Transactional
         public void addAssessment(String studentId, String courseId, int courseYear, Integer semester, Integer assessYear, int score) throws Exception {
