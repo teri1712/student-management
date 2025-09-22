@@ -70,7 +70,7 @@ public class CourseStudentService implements CourseStudentDao {
                 throws Exception {
                 try {
                         return em.createQuery(
-                                        "select sc from StudentCourse sc join fetch sc.assessments join fetch sc.student join fetch sc.course where sc.id.courseId = :cid and sc.id.courseYear = :yr",
+                                        "select sc from StudentCourse sc left join fetch sc.assessments join fetch sc.student join fetch sc.course where sc.id.courseId = :cid and sc.id.courseYear = :yr",
                                         StudentCourse.class)
                                 .setParameter("cid", id)
                                 .setParameter("yr", year)
@@ -85,7 +85,7 @@ public class CourseStudentService implements CourseStudentDao {
         @Transactional
         public List<StudentCourse> getCoursesByStudentInTheYear(final String studentId, final int year) throws Exception {
                 try {
-                        String jpql = "select sc from StudentCourse sc  where sc.id.studentId = :sid" +
+                        String jpql = "select sc from StudentCourse sc left join fetch sc.assessments join fetch sc.course where sc.id.studentId = :sid" +
                                 (year != -1 ? " and sc.id.courseYear = :yr" : "");
                         TypedQuery<StudentCourse> q = em.createQuery(jpql, StudentCourse.class)
                                 .setParameter("sid", studentId);
