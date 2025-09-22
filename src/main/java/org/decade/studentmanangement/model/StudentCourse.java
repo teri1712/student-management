@@ -29,7 +29,7 @@ public class StudentCourse {
         @NotNull
         private Course course;
 
-        @OneToMany(mappedBy = "studentCourse", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+        @OneToMany(mappedBy = "studentCourse", cascade = CascadeType.ALL)
         @OrderBy("semester DESC")
         @Valid
         private List<Assessment> assessments = new ArrayList<>();

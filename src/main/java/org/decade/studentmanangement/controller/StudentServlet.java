@@ -86,7 +86,7 @@ public class StudentServlet extends HttpServlet {
                                         resp.sendError(404, "Student not found");
                                         return;
                                 }
-                                List<StudentCourse> courses = courseStudentDao.getCoursesByStudentInTheYear(id, courseYear == null ? -1 : Integer.parseInt(courseYear));
+                                List<StudentCourse> courses = courseStudentDao.getCoursesByStudentInTheYear(id, courseYear == null ? 2025 : Integer.parseInt(courseYear));
                                 req.setAttribute("student", s);
                                 req.setAttribute("courses", courses);
                                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/management/editstudent.jsp");

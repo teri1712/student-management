@@ -14,11 +14,10 @@ public class AuthenticationFilter implements Filter {
                 ServletRequest request,
                 ServletResponse response,
                 FilterChain chain) throws IOException, ServletException {
-
                 HttpServletRequest req = (HttpServletRequest) request;
+                System.out.println("Current path: " + req.getRequestURI());
                 HttpServletResponse resp = (HttpServletResponse) response;
                 HttpSession session = req.getSession(false);
-                System.out.println("okk");
                 boolean loggedIn = session != null && session.getAttribute("user") != null;
                 if (!loggedIn) {
                         resp.sendRedirect(req.getContextPath() + "/login.jsp");

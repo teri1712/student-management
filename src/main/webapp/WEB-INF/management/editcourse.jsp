@@ -104,10 +104,6 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0 fw-bold text-dark">Students in Course</h4>
-                        <form class="input-group w-auto">
-                            <input type="text" readonly class="form-control"
-                                   value="Course: <%=course.getId()%> - <%=course.getYear()%>">
-                        </form>
                     </div>
                 </div>
                 <div class="card-body p-4">
@@ -130,7 +126,8 @@
                                 </td>
                                 <td><%= student.getStudent().getFullname() %>
                                 </td>
-                                <td><%= student.getScore() == null ? "-" : student.getScore() %></td>
+                                <td><%= student.getScore() == null ? "-" : student.getScore() %>
+                                </td>
                                 <td class="text-nowrap text-center">
                                     <div class="d-inline">
                                         <button type="button" class="btn btn-outline-danger btn-sm"

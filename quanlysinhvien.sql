@@ -132,7 +132,12 @@ VALUES ('SV001', 'Nguyen Van An', '2000-05-15', 3, 'Ha Noi', 'Good student'),
        ('SV002', 'Tran Thi Binh', '2001-03-20', 2, 'Ho Chi Minh', 'Active in clubs'),
        ('SV003', 'Le Minh Cuong', '2000-11-10', 4, 'Da Nang', 'Sport team captain'),
        ('SV004', 'Pham Thu Dung', '2001-07-25', 1, 'Can Tho', 'New student'),
-       ('SV005', 'Hoang Van Em', '2000-12-30', 3, 'Hai Phong', 'Class representative');
+       ('SV005', 'Hoang Van Em', '2000-12-30', 3, 'Hai Phong', 'Class representative'),
+       ('SV006', 'Vu Thi Huong', '2002-12-17', 5, 'Can Tho', 'student'),
+       ('SV007', 'Tran Van Khanh', '2002-12-17', 5, 'Can Tho', 'student'),
+       ('SV008', 'Le Thi Mai', '2002-12-17', 5, 'Can Tho', 'student'),
+       ('SV009', 'Pham Van Nam', '2002-12-17', 5, 'Can Tho', 'student'),
+       ('SV010', 'Nguyen Thi Oanh', '2002-12-17', 5, 'Can Tho', 'student');
 
 INSERT INTO QuanLySinhVien.StaffUser (username, pw, fullname, role)
 VALUES ('admin', 'admin123', 'Administrator', 'admin'),
@@ -159,7 +164,51 @@ VALUES ('SV001', 'COMP101', 2025),
        ('SV002', 'MATH201', 2025),
        ('SV003', 'COMP101', 2025),
        ('SV004', 'ENG201', 2025),
-       ('SV005', 'PHY101', 2025);
+       ('SV005', 'PHY101', 2025),
+       ('SV006', 'COMP101', 2025),
+       ('SV007', 'COMP101', 2025),
+       ('SV008', 'COMP101', 2025),
+       ('SV009', 'COMP101', 2025),
+       ('SV010', 'COMP101', 2025);
+
+
+INSERT INTO QuanLySinhVien.Assessment (idStudent, idCourse, courseYear, semester, assessYear, score)
+VALUES
+-- First assessment
+('SV001', 'COMP101', 2025, 1, 2025, 8),
+('SV002', 'COMP101', 2025, 1, 2025, 7),
+('SV003', 'COMP101', 2025, 1, 2025, 9),
+('SV004', 'COMP101', 2025, 1, 2025, 6),
+('SV005', 'COMP101', 2025, 1, 2025, 8),
+('SV006', 'COMP101', 2025, 1, 2025, 7),
+('SV007', 'COMP101', 2025, 1, 2025, 8),
+('SV008', 'COMP101', 2025, 1, 2025, 9),
+('SV009', 'COMP101', 2025, 1, 2025, 6),
+('SV010', 'COMP101', 2025, 1, 2025, 7),
+
+-- Second assessment
+('SV001', 'COMP101', 2025, 2, 2025, 9),
+('SV002', 'COMP101', 2025, 2, 2025, 8),
+('SV003', 'COMP101', 2025, 2, 2025, 10),
+('SV004', 'COMP101', 2025, 2, 2025, 7),
+('SV005', 'COMP101', 2025, 2, 2025, 9),
+('SV006', 'COMP101', 2025, 2, 2025, 8),
+('SV007', 'COMP101', 2025, 2, 2025, 7),
+('SV008', 'COMP101', 2025, 2, 2025, 8),
+('SV009', 'COMP101', 2025, 2, 2025, 7),
+('SV010', 'COMP101', 2025, 2, 2025, 8),
+
+-- Third assessment
+('SV001', 'COMP101', 2025, 3, 2025, 8),
+('SV002', 'COMP101', 2025, 3, 2025, 9),
+('SV003', 'COMP101', 2025, 3, 2025, 9),
+('SV004', 'COMP101', 2025, 3, 2025, 8),
+('SV005', 'COMP101', 2025, 3, 2025, 10),
+('SV006', 'COMP101', 2025, 3, 2025, 9),
+('SV007', 'COMP101', 2025, 3, 2025, 8),
+('SV008', 'COMP101', 2025, 3, 2025, 9),
+('SV009', 'COMP101', 2025, 3, 2025, 8),
+('SV010', 'COMP101', 2025, 3, 2025, 9);
 
 INSERT INTO QuanLySinhVien.FileAttachment (ownerUsername, path)
 VALUES ('teacher1', 'certificate-sample.png');
